@@ -21,14 +21,19 @@
             color: #ffffff !important;
         }
         #monBouton {
-            padding: 12px 24px;
-            font-size: 18px;
+            width: 120px;          /* Mếme valeur que la hauteur */
+            height: 120px;         /* Même valeur que la largeur */
+            border-radius: 50%;    /* Transforme le carré en cercle parfait */
+            padding: 0;            /* Retire les marges internes pour garder la forme */
+            font-size: 16px;
             background-color: #ff9800;
             color: white;
             border: none;
-            border-radius: 20px;
             cursor: pointer;
             margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         button {
             width: 100%;
