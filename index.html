@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon projet</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #ffffff;
+      }
+
+      h1 {
+        color: #000000;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      button {
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        border: none;
+        border-radius: 980px;
+        background-color: #ff9317;
+        color: rgb(255, 255, 255);
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+
+      button:hover {
+        background-color: #e37500;
+      }
+
+      button:active {
+        transform: scale(0.96);
+      }
+    /* Définition des animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slidedown {
+  0% { transform: translateY(-30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Classes à appliquer */
+.anim-shake { animation: shake 0.4s ease; }
+.anim-pop { animation: pop 0.3s ease; }
+.anim-rotate { animation: rotate 0.5s ease; }
+.anim-flip { animation: flip 0.6s ease; }
+/* Style des petits boutons de thème */
+.btn-theme {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    background-color: #eee;
+    color: #333;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+/* Styles pour le mode Sombre */
+body.theme-sombre {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+}
+body.theme-sombre h1 {
+    color: #ffffff !important;
+}
+
+/* Styles pour le mode Bleu */
+body.theme-bleu {
+    background-color: #eef6ff !important;
+    color: #0d3b66 !important;
+}
+body.theme-bleu h1 {
+    color: #0d3b66 !important;
+}
+@media (max-width: 600px) {
+  body {
+    padding: 20px;
+    height: auto; /* Permet au contenu de défiler proprement si l'écran est petit */
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  button {
+    width: 100%; /* Le bouton prend toute la largeur sur mobile */
+    max-width: 300px;
+  }
+}
+</style>
+</head><body>
+
+    <h1 id="titre">Texte original</h1>
+    <button id="monBouton">Cliquer ici</button>
+    <input type="text" id="barreRecherche" placeholder="Rechercher une info..." style="padding: 10px; font-size: 16px; margin-top: 15px; width: 80%; max-width: 400px;">
+    <div id="resultatsRecherche" style="margin-top: 15px; text-align: center;"></div>
+    <!-- Sélecteur de thème -->
+<div id="themeContainer" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+    <button class="btn-theme" onclick="changerTheme('clair')">Clair</button>
+    <button class="btn-theme" onclick="changerTheme('sombre')">Sombre</button>
+    <button class="btn-theme" onclick="changerTheme('bleu')">Bleu</button>
+</div>
+
+<!-- Sélecteur de catégorie -->
+<div style="margin-top: 15px; text-align: center;">
+    <select id="selectCategorie" style="padding: 8px 12px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc;">
+        <option value="tous">Tous les thèmes</option>
+        <option value="politique">Politique / Géopolitique</option>
+        <option value="cinematographie">Cinématographie</option>
+        <option value="arts">Arts</option>
+        <option value="musique">Musique</option>
+        <option value="nature">Nature</option>
+        <option value="geographie">Géographie</option>
+        <option value="gaming">Gaming</option>
+    </select>
+</div>
+   <script>
+const bouton = document.getElementById('monBouton');
+const titre = document.getElementById('titre');
+const animations = ['anim-shake', 'anim-pop', 'anim-rotate', 'anim-flip'];
+
+let dernierIndex = -1;
+
+// 1. Liste d'infos catégorisées
+const infos = [
+  { texte: "Nauru est le seul pays du monde qui ne possède pas de capitale officielle.", cat: "geographie" },
+  { texte: "Les bananes sont naturellement légèrement radioactives.", cat: "nature" },
+  { texte: "Le coeur d'une baleine bleue fait a peu près la taille d'une Renault Clio.", cat: "nature" },
+  { texte: "La tour eiffel peut grandir de 15 cm en été avec la chaleur.", cat: "arts" },
+  { texte: "Les loutres se tiennent la main en dormant pour ne pas dériver.", cat: "nature" },
+  { texte: "Les huit première déciamle de PI sont 3,14159265.", cat: "nature" },
+  { texte: "Le 24 février 2022 marque la date d'invasion de l'Ukraine par la Russie.", cat: "politique" },
+  { texte: "Le rappeur Werenoi est décédé le 17 mai 2025 à l'âge de 31 ans d'une brutale crise cardiaque.", cat: "musique" },
+  { texte: "Les seuls pays possédant des missiles nucléaire sont la Russie (4400), les USA (3700), la Chine (620), la France (290), le Royaume-Uni (225), l'Inde (190), le Pakistan (170), Israël (90) et la Corée du Nord (60).", cat: "politique" },
+  { texte: "Lionel Messi est officielement le joueur le plus titré de l'hisoire du foootball avec pas moins de 48 trophés cumulés.", cat: "gaming" },
+  { texte: "Depuis la sortie de la console, Sony a déclarer le 31 mars 2026 avoir vendu 93,7 millions d'exemplaires de PS5 à travers le monde, encore loin derrière la PS2 avec ses 160 millions d'unités écoulées depuis sa sortie en 2000.", cat: "gaming" },
+  { texte: "L'intelligence artificielle Chat GPT s'impose comme étant l'application la plus téléchargée au monde en 2025 succédant Instagram en 2024.", cat: "gaming" },
+  { texte: "Le brésil est la nation qui possède le plus de coupe du monde de football.", cat: "geographie" },
+  { texte: "Le Rafale génère a lui tout seul 30 à 60% des exportations de défense de la France (aux Émirats Arabes Unis, en Égypte, en Inde, au Qatar, en Grèce, en Indonesie...)", cat: "politique" },
+  { texte: "La matière la plus chère du monde est l'antimatière, avec un prix pouvant varier de 45 à 60 milliards de dollars le gramme, est produite près de Genève.", cat: "nature" },
+  { texte: "L'homme connu le plus grand jamais mesuré est officielement Robert Wadlow et mesurait 2,72 mètre à sa mort en 1940 à l'âge de 22 ans. (États-Unis).", cat: "nature" },
+  { texte: "L'animal le plus rapide du monde est le faucon pèlerin pouvant dépasser les 380 km/h en piqué.", cat: "nature" },
+  { texte: "Le rappeur Ninho est en 2026 l'artiste francophone le plus titré au monde avec ses 208 singles d'or, 146 singles de platine et 82 singles de diamant.", cat: "musique" },
+  { texte: "Le Javascript est le langage informatique le plus utilisé au monde et il fait fonctionner à lui seul 98% des interfaces de sites web.", cat: "gaming" },
+  { texte: "Les 5 plus grands PIB au monde actuel sont: 1-Les USA, 2-La chine 3-L'Allemagne 4-Le Japon 5-Le Royaume Unis.", cat: "politique" },
+  { texte: "La plus grande prise d'otage de l'hisoire s'est déroulée à l'école de Beslan en 2004 en Russie et contenait 1128 otages parmis lesquels 334 sont morts, majoritairement des enfants.", cat: "politique" },
+  { texte: "La Suède est le pays qui compte le plus d'îles au monde, suivis par la Norvège et la Finlande.", cat: "geographie" },
+  { texte: "Les astronomes estiment qu'il y a plus d'étoile présentes dans l'univers que de grains de sable sur Terre.", cat: "nature" },
+  { texte: "Chez les hyènes tachetées, les femelles possèdent un pseudo pénis.", cat: "nature" },
+  { texte: "À sa naissance, un girafon tombe de à peu près 1,5 à 2 mètres de haut.", cat: "nature" },
+  { texte: "En 2023 à Los Angeles, la plus grande pizza au monde à été cuisinée, elle mesurait environ 1200 mètres carrés pour un poid total de 6000Kg.", cat: "arts" },
+  { texte: "Les statues géante situées sur l'île de Paques se nomment moai.", cat: "arts" },
+  { texte: "Le Canada est le 2ème pays du monde mais il est également le pays avec le plus de littoral au monde.", cat: "geographie" },
+  { texte: "En novembre 2023, un soldat Ukrainien à neutralisé un soldat russe situé 3800 mètres à l'aide d'un sniper Horizon's Lord Ukrainien.", cat: "politique" },
+  { texte: "Le serpent le plus venimeux au monde est le Taïpan du desert, une seule de ses morsures contiennent suffisamment de venin pour tuer 100 hommes.", cat: "nature" },
+  { texte: "Baby Shark est la vidéo la plus visionnée au monde tout réseaux confondus, postée sur Youtube elle cumule aujourd'hui plus de 17 milliars d'écoutes.", cat: "cinematographie" },
+  { texte: "Le mat le plus rapide aux echecs est le mat du sot et peut mettre en echec l'adversaire en moins de trois coups.", cat: "gaming" },
+  { texte: "La maison de production la plus riche du monde est actuellement Walt Disney Company et ses films phares tel que Le Roi Lion ou Raiponce.", cat: "cinematographie" },
+  { texte: "Le jeu Minecraft sorti en 2011 est désormais reconnu comme étant le jeu vidéo le plus vendu de tous les temps.", cat: "gaming" },
+  { texte: "La religion la plus pratiquée au monde est le christianime, cependant le courant religieux le plus populaire est le sunnisme suivit du catholicisme.", cat: "politique" },
+  { texte: "L'animal marin le plus rapide du monde est le voilier de l'Indo-Pacifique.", cat: "nature" },
+  { texte: "La crevette-mante frappeuse est capable d'anchaîner des coups de poings atteignants une puissance de 1500 newtons et une vitesse de 80 km/h.", cat: "nature" },
+  { texte: "Le Nokia 1100 demeure comme le téléphone le plus vendu de tous les temps avec 250 millions d'exemplaires vendus.", cat: "gaming" },
+  { texte: "Le Turritopsis dohrnii est immunisé contre la mort naturelle et la vieillesse.", cat: "nature" },
+  { texte: "Les corbeau sont très intelligents, ils sont capables de reconnaitre de visages, utiliser des outils, comprennent la physique de base, possèdent une grande mémoire stratégique et emploient même un riche vocabulaire afin de communiquer.", cat: "nature" },
+  { texte: "En Février 1917, les révolus bolchéviks Russes sous l'influence de Lénine renversent le régime Tsariste (Nicolas II), ce dernier abdique en Mars 1917 et est exécuté lui et sa famille sur ordre de Lénine en 1918 à Lekaterinbourg.", cat: "politique" },
+  { texte: "Le Parti Socialiste Français a été fondé en 1905, pourtant il n'est pas le plus ancien parti politique encore en fonction car il s'agit du Parti Radical Français.", cat: "politique" },
+  { texte: "L'USS Nautilus est le plus ancien sous marin armé du monde (lancé en 1954), ce SNA Américain a réalisé l'exploit d'être le premier sous marin à naviguer sous les glaces de l'Arctique.", cat: "politique" },
+  { texte: "D'après les hisoriens, la Seconde Guerre Mondiale aurait dans son entiereté causée la mort de 60 à 85 millions de personnes dans le monde.", cat: "politique" },
+  { texte: "L'URSS (dirigée par Joseph Staline) est considérée comme étant la première nation ayant résistée au Blietzkrieg Allemands durant la Seconde Guerre Mondiale notemment à Stalingrad en 1942.", cat: "politique" },
+  { texte: "À Singapour, mâcher un chewing-gum est interdit (sauf raisons thérapeutiques) depuis que l'on retrouva des chewings-gums collés aux portes de métros ce qui fût perçu comme des actes de vandalismes par le premier ministre Goh Chok Tong.", cat: "geographie" },
+  { texte: "Au Canada, les lacs représentent environ 7,6% du territoire, le pays réunit à lui seul 60 à 62% des lacs présents dans le monde et détient environ 20% des reserves d'eau douce de surface stockée à l'échelle planétaire.", cat: "geographie" },
+  { texte: "La Russie possède un frontière d'environ 18 km de long avec la corée du nord.", cat: "geographie" },
+  { texte: "La bolivie ne possède plus d'accès à l'océan ou la mer depuis 1884 mais détient toujours une marine nationale qui opère principalement dans des lacs comme le Lac Titicaca.", cat: "geographie" },
+  { texte: "La Russie et les États Unis sont séparés de seulement 3,8 km entre la grande Diomède (Russie) et la petite Diomède (Etats Unis) dans le Détroit de Bering.", cat: "geographie" }
+];
+
+// 2. Gestion du bouton d'affichage
+bouton.addEventListener('click', function() {
+    const selectCategorie = document.getElementById('selectCategorie');
+    const catChoisie = selectCategorie ? selectCategorie.value : 'tous';
+
+    const infosFiltrees = catChoisie === 'tous' 
+        ? infos 
+        : infos.filter(info => info.cat === catChoisie);
+
+    if (infosFiltrees.length === 0) {
+        titre.textContent = "Aucun fait disponible pour cette catégorie.";
+        return;
+    }
+
+    let auHasard;
+    do {
+        auHasard = Math.floor(Math.random() * infosFiltrees.length);
+    } while (auHasard === dernierIndex && infosFiltrees.length > 1);
+
+    dernierIndex = auHasard;
+    titre.textContent = infosFiltrees[auHasard].texte;
+
+    // Animation
+    titre.classList.remove(...animations);
+    void titre.offsetWidth;
+    const animAuHasard = animations[Math.floor(Math.random() * animations.length)];
+    titre.classList.add(animAuHasard);
+});
+
+// 3. Barre de recherche
+const barreRecherche = document.getElementById('barreRecherche');
+const resultatsRecherche = document.getElementById('resultatsRecherche');
+
+barreRecherche.addEventListener('input', function() {
+    const texteSaisi = barreRecherche.value.toLowerCase().trim();
+
+    if (texteSaisi === '') {
+        resultatsRecherche.innerHTML = '';
+        return;
+    }
+
+    const resultats = infos.filter(info => info.texte.toLowerCase().includes(texteSaisi));
+
+    if (resultats.length > 0) {
+        resultatsRecherche.innerHTML = resultats.map(item => `<p>${item.texte}</p>`).join('');
+    } else {
+        resultatsRecherche.innerHTML = '<p>Aucun résultat trouvé.</p>';
+    }
+});
+
+// 4. Changement de thème
+function changerTheme(theme) {
+    document.body.classList.remove('theme-sombre', 'theme-bleu');
+
+    if (theme === 'sombre') {
+        document.body.classList.add('theme-sombre');
+    } else if (theme === 'bleu') {
+        document.body.classList.add('theme-bleu');
+    }
+}
+</script>
