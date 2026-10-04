@@ -6,58 +6,129 @@
     <title>Mon Quiz Culture</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
             background-color: #ffffff;
             color: #000000;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
+
         .theme-sombre {
             background-color: #121212 !important;
             color: #ffffff !important;
         }
+
         .theme-bleu {
             background-color: #1e293b !important;
             color: #ffffff !important;
         }
+
+        h1#titre {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        /* Bouton orange rond */
         #monBouton {
-            width: 120px;          /* Mếme valeur que la hauteur */
-            height: 120px;         /* Même valeur que la largeur */
-            border-radius: 50%;    /* Transforme le carré en cercle parfait */
-            padding: 0;            /* Retire les marges internes pour garder la forme */
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            padding: 0;
             font-size: 16px;
+            font-weight: bold;
             background-color: #ff9800;
             color: white;
             border: none;
             cursor: pointer;
-            margin-top: 15px;
-            display: inline-flex;
+            margin-bottom: 25px;
+            display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.1s ease;
         }
-        button {
+
+        #monBouton:active {
+            transform: scale(0.95);
+        }
+
+        /* Barre de recherche */
+        #barreRecherche {
+            padding: 10px 15px;
+            font-size: 15px;
             width: 100%;
             max-width: 380px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 25px;
+            box-sizing: border-box;
+        }
+
+        /* Selecteur de thème (boutons) */
+        #themeContainer {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-theme {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+
+        /* Selecteur de catégorie */
+        #selectCategorie {
+            padding: 8px 12px;
+            font-size: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 40px;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        footer a {
+            color: #666;
+            text-decoration: underline;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
 
     <h1 id="titre">Texte original</h1>
-    <button id="monBouton">Cliquer ici</button>
-    <input type="text" id="barreRecherche" placeholder="Rechercher une info..." style="padding: 10px; font-size: 16px; margin-top: 15px; width: 80%; max-width: 400px;">
-    <div id="resultatsRecherche" style="margin-top: 15px; text-align: center;"></div>
 
-    <!-- Selecteur de theme -->
-    <div id="themeContainer" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+    <!-- 1. Bouton rond en haut -->
+    <button id="monBouton">Cliquer ici</button>
+
+    <!-- 2. Barre de recherche juste en dessous -->
+    <input type="text" id="barreRecherche" placeholder="Rechercher une info...">
+    <div id="resultatsRecherche" style="margin-bottom: 20px; text-align: center;"></div>
+
+    <!-- 3. Thèmes -->
+    <div id="themeContainer">
         <button class="btn-theme" onclick="changerTheme('clair')">Clair</button>
         <button class="btn-theme" onclick="changerTheme('sombre')">Sombre</button>
         <button class="btn-theme" onclick="changerTheme('bleu')">Bleu</button>
     </div>
 
-    <!-- Selecteur de categorie -->
-    <div style="margin-top: 15px; text-align: center;">
-        <select id="selectCategorie" style="padding: 8px 12px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc;">
+    <!-- 4. Catégories -->
+    <div>
+        <select id="selectCategorie">
             <option value="tous">Tous les thèmes</option>
             <option value="politique">Politique / Géopolitique</option>
             <option value="cinematographie">Cinéma</option>
@@ -70,14 +141,17 @@
         </select>
     </div>
 
+    <!-- 5. Politique de confidentialité en bas -->
+    <footer>
+        <a href="politique-confidentialite.html">Politique de confidentialité</a>
+    </footer>
+
     <script>
         const bouton = document.getElementById('monBouton');
         const titre = document.getElementById('titre');
-        const animations = ['anin-shake', 'anin-pop', 'anin-rotate', 'anin-flip'];
 
         let dernierIndex = -1;
 
-        // 1. Liste d'infos catégorisées
         const infos = [
             { texte: "Nauru est le seul pays du monde qui ne possède pas de capitale officielle.", cat: "geographie" },
             { texte: "Les bananes sont naturellement légèrement radioactives.", cat: "nature" },
@@ -126,7 +200,6 @@
             { texte: "Mao Zedong (Chine, 1949) est considéré comme l'homme ayant causé le plus de mort.", cat: "politique" }
         ];
 
-        // 2. Gestion du bouton d'affichage
         bouton.addEventListener('click', function() {
             const selectCategorie = document.getElementById('selectCategorie');
             const catChoisie = selectCategorie ? selectCategorie.value : 'tous';
@@ -149,7 +222,6 @@
             titre.textContent = infosFiltrees[auHasard].texte;
         });
 
-        // 3. Barre de recherche
         const barreRecherche = document.getElementById('barreRecherche');
         const resultatsRecherche = document.getElementById('resultatsRecherche');
 
@@ -170,7 +242,6 @@
             }
         });
 
-        // 4. Changement de thème
         function changerTheme(theme) {
             document.body.classList.remove('theme-sombre', 'theme-bleu');
 
@@ -181,9 +252,5 @@
             }
         }
     </script>
-
-    <footer style="text-align: center; margin-top: 30px; padding: 10px; font-size: 0.9em;">
-        <a href="politique-confidentialite.html" style="color: #666; text-decoration: underline;">Politique de confidentialité</a>
-    </footer>
 </body>
 </html>
