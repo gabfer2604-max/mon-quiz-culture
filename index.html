@@ -233,6 +233,48 @@
             color: #888;
             text-decoration: underline;
             font-size: 0.9em;
+
+            <!-- Menu latéral -->
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleMenu()">&times;</button>
+        <br><br>
+
+        <!-- 1. Section Actu -->
+        <div class="sidebar-section">
+            <details open>
+                <summary class="menu-title">Actu</summary>
+                <ul>
+                    <li><a href="https://www.francetvinfo.fr/" target="_blank">Franceinfo</a></li>
+                    <li><a href="https://www.20minutes.fr/" target="_blank">20 Minutes</a></li>
+                    <li><a href="https://france3-regions.francetvinfo.fr/" target="_blank">France 3 Régions</a></li>
+                    <li><a href="https://www.lequipe.fr/" target="_blank">L'Équipe</a></li>
+                    <li><a href="https://www.lefigaro.fr/" target="_blank">Le Figaro</a></li>
+                    <li><a href="https://www.lemonde.fr/" target="_blank">Le Monde</a></li>
+                </ul>
+            </details>
+        </div>
+
+        <!-- 2. Section Le lecteur -->
+        <div class="sidebar-section">
+            <details open>
+                <summary class="menu-title">Le lecteur</summary>
+                <ul>
+                    <li><a href="generateur-de-faits.html">La démarche du projet</a></li>
+                    <li><a href="quiz-du-jour.html">🎯 Le Quiz du Jour</a></li>
+                </ul>
+            </details>
+        </div>
+
+        <!-- 3. Section À propos -->
+        <div class="sidebar-section">
+            <details open>
+                <summary class="menu-title">À propos</summary>
+                <ul>
+                    <li><a href="a-propos.html">Qui suis-je ?</a></li>
+                </ul>
+            </details>
+        </div>
+    </div>
         }
     </style>
 </head>
@@ -249,40 +291,39 @@
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
 
     <!-- Menu latéral -->
-    <div id="sidebar" class="sidebar">
-        <button class="close-btn" onclick="toggleMenu()">&times;</button>
-        <br><br>
+    <nav class="sidebar-menu">
 
-        <!-- 1. Section Actu -->
-        <div class="sidebar-section">
-            <h3>Actu</h3>
-            <ul>
-                <li><a href="https://www.francetvinfo.fr/" target="_blank">Franceinfo</a></li>
-                <li><a href="https://www.20minutes.fr/" target="_blank">20 Minutes</a></li>
-                <li><a href="https://france3-regions.francetvinfo.fr/" target="_blank">France 3 Régions</a></li>
-                <li><a href="https://www.lequipe.fr/" target="_blank">L'Équipe</a></li>
-                <li><a href="https://www.lefigaro.fr/" target="_blank">Le Figaro</a></li>
-                <li><a href="https://www.lemonde.fr/" target="_blank">Le Monde</a></li>
-            </ul>
-        </div>
-
-        <!-- Section Le lecteur -->
-<div class="sidebar-section">
-    <h3>Le lecteur</h3>
-    <ul>
-        <li><a href="generateur-de-faits.html">La démarche du projet</a></li>
-        <li><a href="quiz-du-jour.html">🎯 Le Quiz du Jour</a></li>
+  <!-- Section Actu -->
+  <details open>
+    <summary class="menu-title">Actu</summary>
+    <ul class="submenu">
+      <li><a href="#">Franceinfo</a></li>
+      <li><a href="#">20 Minutes</a></li>
+      <li><a href="#">France 3 Régions</a></li>
+      <li><a href="#">L'Équipe</a></li>
+      <li><a href="#">Le Figaro</a></li>
+      <li><a href="#">Le Monde</a></li>
     </ul>
-</div>
+  </details>
 
-        <!-- 3. Section À propos -->
-        <div class="sidebar-section">
-            <h3>À propos</h3>
-            <ul>
-                <li><a href="a-propos.html">Qui suis-je ?</a></li>
-            </ul>
-        </div>
-    </div>
+  <!-- Section Le lecteur -->
+  <details open>
+    <summary class="menu-title">Le lecteur</summary>
+    <ul class="submenu">
+      <li><a href="#">La démarche du projet</a></li>
+      <li><a href="#">🎯 Le Quiz du Jour</a></li>
+    </ul>
+  </details>
+
+  <!-- Section À propos -->
+  <details open>
+    <summary class="menu-title">À propos</summary>
+    <ul class="submenu">
+      <li><a href="#">Qui suis-je ?</a></li>
+    </ul>
+  </details>
+
+</nav>
 
     <!-- Contenu principal -->
     <h1 id="titre">Texte original</h1>
