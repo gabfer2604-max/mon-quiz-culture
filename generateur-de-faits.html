@@ -10,10 +10,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 30px 20px;
+            padding: 20px;
             margin: 0;
             background-color: #ffffff;
-            color: #000000;
+            color: #222222;
             min-height: 100vh;
             box-sizing: border-box;
         }
@@ -27,52 +27,61 @@
 
         h1 {
             color: #ff9800;
-            font-size: 2rem;
+            font-size: 1.8rem;
+            margin-top: 10px;
             margin-bottom: 20px;
             border-bottom: 2px solid #ff9800;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         h2 {
-            color: #ff9800;
-            font-size: 1.3rem;
+            color: #111111;
+            font-size: 1.25rem;
             margin-top: 25px;
             margin-bottom: 10px;
         }
 
         p {
-            font-size: 1.05rem;
+            font-size: 1rem;
             margin-bottom: 15px;
             color: #333333;
         }
 
-        ul, ol {
+        ol {
             margin-bottom: 20px;
             padding-left: 20px;
         }
 
         li {
-            margin-bottom: 8px;
-            font-size: 1.05rem;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
         .research-box {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
             border-left: 4px solid #ff9800;
-            padding: 15px 20px;
+            padding: 15px 18px;
             margin: 25px 0;
             border-radius: 0 8px 8px 0;
         }
 
+        .research-box h2 {
+            margin-top: 0;
+            color: #ff9800;
+        }
+
         .btn-retour {
             display: inline-block;
-            margin-top: 25px;
-            padding: 10px 20px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            padding: 12px 24px;
             background-color: #ff9800;
             color: white;
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
+            font-size: 1rem;
+            text-align: center;
             transition: background-color 0.2s;
         }
 
@@ -88,20 +97,20 @@
 
         <h2>Pourquoi le générateur de faits ?</h2>
         <p>Apprendre ne signifie pas forcément rester assis devant un manuel pendant des heures. La mémoire fonctionne autrement : c'est ce que les chercheurs appellent l'<strong>effet de test</strong> (<em>testing effect</em>).</p>
-        <p>En 2006, les psychologues américains Henry Roediger et Jeffrey Karpicke ont étudié ce phénomène. Leurs expériences ont démontré que se tester régulièrement est bien plus efficace que relire passivement. C'est de cette idée que s'inspire Mon Quiz Culture.</p>
+        <p>En 2006, les psychologues américains Henry Roediger et Jeffrey Karpicke ont étudié ce phénomène. Leurs expériences ont montré que se tester régulièrement est bien plus efficace que relire passivement. C'est de cette idée que s'inspire Mon Quiz Culture.</p>
 
         <h2>🧠 Apprendre sans avoir l'impression d'apprendre</h2>
         <p>Le principe est simple :</p>
         <ol>
             <li><strong>Découvrir :</strong> Un fait apparaît aléatoirement à l'écran.</li>
-            <li><strong>S'interroger :</strong> Votre cerveau reçoit une information nouvelle et tente de la comprendre et de la retenir.</li>
-            <li><strong>Récupérer :</strong> En revenant régulièrement sur le site, vous sollicitez votre mémoire.</li>
-            <li><strong>Espacer :</strong> Plutôt que d'essayer d'apprendre énormément d'informations d'un coup, vous revenez régulièrement quelques secondes.</li>
+            <li><strong>S'interroger :</strong> Votre cerveau reçoit une information nouvelle et peut essayer de la comprendre et de la retenir.</li>
+            <li><strong>Récupérer :</strong> En revenant régulièrement sur le site et en essayant de vous rappeler les faits déjà rencontrés, vous sollicitez votre mémoire.</li>
+            <li><strong>Espacer :</strong> Plutôt que d'essayer d'apprendre énormément d'informations en une seule fois, vous pouvez revenir régulièrement découvrir de nouveaux faits.</li>
         </ol>
 
-        <h2>🔍 Pourquoi autant de thèmes ?</h2>
-        <p>La culture générale ne se limite pas à une seule matière. Politique, histoire, géographie, sciences, nature, sport, technologie, jeux vidéo, musique...</p>
-        <p>Le générateur permet de varier les sujets et de découvrir des informations auxquelles on ne s'intéresserait pas forcément au départ. Cette variété transforme l'apprentissage en découverte !</p>
+        <h2>🌎 Pourquoi autant de thèmes ?</h2>
+        <p>La culture générale ne se limite pas à une seule matière. Politique, histoire, géographie, sciences, nature, sport, technologie, jeux vidéo, culture, langues...</p>
+        <p>Le générateur permet de varier les sujets et de découvrir des informations auxquelles on ne serait pas forcément allé chercher soi-même. Cette variété permet également de transformer l'apprentissage en découverte !</p>
 
         <h2>🎯 L'objectif de Mon Quiz Culture</h2>
         <p>Le but n'est pas de remplacer les cours, les livres ou un véritable travail scolaire. L'objectif est différent : faire entrer un peu de culture générale dans les moments où l'on n'avait pas prévu d'apprendre.</p>
@@ -109,17 +118,18 @@
 
         <div class="research-box">
             <h2>📑 Ce que dit la recherche</h2>
-            <p><strong>Roediger & Karpicke (2006) – <em>Test-Enhanced Learning</em> :</strong><br>
-            Deux psychologues ont montré que le fait de récupérer activement une information en mémoire améliore sa rétention à long terme.</p>
+            <p><strong>Roediger & Karpicke, 2006 — Test-Enhanced Learning</strong><br>
+            Deux psychologues ont montré que le fait de récupérer activement une information en mémoire peut améliorer sa rétention à long terme.</p>
             
-            <p><strong>Cepeda et al. (2006) – <em>Distributed Practice</em> :</strong><br>
-            Une méta-analyse de 317 expériences montre l'importance de la distribution des apprentissages dans le temps plutôt que l'apprentissage concentré.</p>
+            <p><strong>Cepeda et al., 2006 — Distributed Practice</strong><br>
+            Une méta-analyse de 317 expériences montre l'importance de la distribution des apprentissages dans le temps pour la rétention.</p>
             
-            <p><strong>Dunlosky et al. (2013) – <em>Improving Students' Learning With Effective Learning Techniques</em> :</strong><br>
-            Cette vaste revue de la littérature classe notamment les tests de pratique et la pratique distribuée parmi les techniques d'apprentissage les plus efficaces.</p>
+            <p><strong>Dunlosky et al., 2013 — Improving Students' Learning With Effective Learning Techniques</strong><br>
+            Cette vaste revue de la littérature classe notamment les tests de pratique et la pratique distribuée parmi les techniques d'apprentissage les plus efficaces étudiées.</p>
         </div>
 
-        <a href="index.html" class="btn-retour">← Retour au site</a>
+        <!-- Bouton de retour -->
+        <a href="index.html" class="btn-retour">← Retour à l'accueil</a>
     </div>
 
 </body>
