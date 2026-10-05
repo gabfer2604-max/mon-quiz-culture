@@ -47,7 +47,7 @@
         .burger-bar {
             width: 25px;
             height: 3px;
-            background-color: #888888; /* Barre grise */
+            background-color: #888888;
             border-radius: 2px;
             transition: 0.3s;
         }
@@ -56,8 +56,8 @@
         .sidebar {
             position: fixed;
             top: 0;
-            left: -280px; /* Caché par défaut à gauche */
-            width: 250px;
+            left: -280px;
+            width: 260px;
             height: 100%;
             background-color: #222222;
             color: #ffffff;
@@ -66,10 +66,11 @@
             z-index: 1001;
             padding: 20px;
             box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .sidebar.open {
-            left: 0; /* Glisse vers l'écran */
+            left: 0;
         }
 
         .close-btn {
@@ -81,7 +82,46 @@
             cursor: pointer;
         }
 
-        /* Voile sombre en arrière-plan */
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 1.1rem;
+            color: #ff9800;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+
+        .sidebar-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-section li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-section a {
+            color: #dddddd;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .sidebar-section a:hover {
+            color: #ff9800;
+        }
+
+        .sidebar-section p {
+            font-size: 0.9rem;
+            color: #bbb;
+            line-height: 1.4;
+        }
+
+        /* Voile sombre */
         .overlay {
             position: fixed;
             top: 0;
@@ -171,7 +211,7 @@
 </head>
 <body>
 
-    <!-- Bouton 3 barres -->
+    <!-- Bouton 3 barres (Burger) -->
     <button class="burger-menu" onclick="toggleMenu()">
         <div class="burger-bar"></div>
         <div class="burger-bar"></div>
@@ -181,14 +221,40 @@
     <!-- Voile sombre -->
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
 
-    <!-- Menu latéral en superposition -->
+    <!-- Menu latéral -->
     <div id="sidebar" class="sidebar">
         <button class="close-btn" onclick="toggleMenu()">&times;</button>
-        <h3>Menu</h3>
-        <hr style="border-color: #444;">
-        <p>Tu peux ajouter tes liens ou options ici !</p>
+        <br><br>
+
+        <!-- 1. Section Actu -->
+        <div class="sidebar-section">
+            <h3>Actu</h3>
+            <ul>
+                <li><a href="https://www.francetvinfo.fr/" target="_blank">Franceinfo</a></li>
+                <li><a href="https://www.20minutes.fr/" target="_blank">20 Minutes</a></li>
+                <li><a href="https://france3-regions.francetvinfo.fr/" target="_blank">France 3 Régions</a></li>
+                <li><a href="https://www.lequipe.fr/" target="_blank">L'Équipe</a></li>
+                <li><a href="https://www.lefigaro.fr/" target="_blank">Le Figaro</a></li>
+                <li><a href="https://www.lemonde.fr/" target="_blank">Le Monde</a></li>
+            </ul>
+        </div>
+
+        <!-- 2. Section Le lecteur -->
+        <div class="sidebar-section">
+            <h3>Le lecteur</h3>
+            <ul>
+                <li><a href="#" onclick="toggleMenu();">Générateur de faits</a></li>
+            </ul>
+        </div>
+
+        <!-- 3. Section À propos -->
+        <div class="sidebar-section">
+            <h3>À propos</h3>
+            <p>Application de culture générale interactive conçue pour découvrir des faits captivants au quotidien.</p>
+        </div>
     </div>
 
+    <!-- Contenu principal -->
     <h1 id="titre">Texte original</h1>
 
     <button id="monBouton">Cliquer ici</button>
@@ -221,7 +287,6 @@
     </footer>
 
     <script>
-        // Gestion du menu latéral
         function toggleMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
@@ -239,7 +304,7 @@
             { texte: "Les bananes sont naturellement légèrement radioactives.", cat: "nature" },
             { texte: "Les seuls pays possédant des missiles nucléaires sont la Russie, les USA, la Chine, la France, le Royaume-Uni, l'Inde, le Pakistan, Israël et la Corée du Nord.", cat: "politique" },
             { texte: "Lionel Messi est officiellement le joueur le plus titré de l'histoire du football avec pas moins de 46 trophées cumulés.", cat: "sport" },
-            { texte: "Depuis la sortie de la console, Sony a declared le 31 mars 2026 avoir vendu 93,7 millions d'exemplaires de PS5 à travers le monde.", cat: "gaming" },
+            { texte: "Depuis la sortie de la console, Sony a déclaré le 31 mars 2026 avoir vendu 93,7 millions d'exemplaires de PS5 à travers le monde.", cat: "gaming" },
             { texte: "L'intelligence artificielle Chat GPT s'impose comme étant l'application la plus téléchargée au monde en 2025 succédant à Instagram en 2024.", cat: "gaming" },
             { texte: "Le Brésil est la nation qui possède le plus de coupe du monde de football.", cat: "sport" },
             { texte: "Le Rafale génère à lui tout seul 30 à 40% des exportations de défense de la France.", cat: "politique" },
