@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Quiz Culture</title>
     <style>
+        /* Animation fluide globale pour tout le site */
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.25s ease, color 0.25s ease, transform 0.15s ease, box-shadow 0.2s ease;
+        }
+
         body {
             font-family: system-ui, -apple-system, sans-serif;
             display: flex;
@@ -15,21 +21,22 @@
             background-color: #ffffff;
             color: #000000;
             min-height: 100vh;
-            box-sizing: border-box;
             position: relative;
+            -webkit-tap-highlight-color: transparent; /* Fluidité mobile */
         }
 
-        .theme-sombre {
-            background-color: #121212 !important;
-            color: #ffffff !important;
+        /* Thèmes plus fluides sans !important */
+        body.theme-sombre {
+            background-color: #121212;
+            color: #ffffff;
         }
 
-        .theme-bleu {
-            background-color: #1e293b !important;
-            color: #ffffff !important;
+        body.theme-bleu {
+            background-color: #1e293b;
+            color: #ffffff;
         }
 
-        /* Bouton Menu Burger (3 barres) */
+        /* Bouton Menu Burger */
         .burger-menu {
             position: absolute;
             top: 15px;
@@ -40,8 +47,13 @@
             cursor: pointer;
             background: none;
             border: none;
-            padding: 5px;
+            padding: 8px;
             z-index: 1000;
+            border-radius: 6px;
+        }
+
+        .burger-menu:active {
+            transform: scale(0.92);
         }
 
         .burger-bar {
@@ -49,10 +61,9 @@
             height: 3px;
             background-color: #888888;
             border-radius: 2px;
-            transition: 0.3s;
         }
 
-        /* Panneau latéral coulissant */
+        /* Panneau latéral coulissant ultra fluide */
         .sidebar {
             position: fixed;
             top: 0;
@@ -62,15 +73,15 @@
             background-color: #222222;
             color: #ffffff;
             box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-            transition: left 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1001;
             padding: 20px;
-            box-sizing: border-box;
             overflow-y: auto;
+            will-change: transform;
         }
 
         .sidebar.open {
-            left: 0;
+            transform: translateX(280px);
         }
 
         .close-btn {
@@ -80,6 +91,7 @@
             font-size: 24px;
             float: right;
             cursor: pointer;
+            padding: 5px;
         }
 
         .sidebar-section {
@@ -101,24 +113,19 @@
         }
 
         .sidebar-section li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .sidebar-section a {
             color: #dddddd;
             text-decoration: none;
             font-size: 0.95rem;
-            transition: color 0.2s;
+            display: block;
+            padding: 4px 0;
         }
 
-        .sidebar-section a:hover {
+        .sidebar-section a:hover, .sidebar-section a:active {
             color: #ff9800;
-        }
-
-        .sidebar-section p {
-            font-size: 0.9rem;
-            color: #bbb;
-            line-height: 1.4;
         }
 
         /* Voile sombre */
@@ -129,12 +136,15 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            display: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
             z-index: 1000;
         }
 
         .overlay.active {
-            display: block;
+            opacity: 1;
+            pointer-events: auto;
         }
 
         h1#titre {
@@ -143,8 +153,10 @@
             margin-bottom: 30px;
             text-align: center;
             max-width: 800px;
+            line-height: 1.4;
         }
 
+        /* Bouton principal fluide */
         #monBouton {
             width: 120px;
             height: 120px;
@@ -160,18 +172,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+            user-select: none;
+        }
+
+        #monBouton:active {
+            transform: scale(0.92);
+            box-shadow: 0 2px 6px rgba(255, 152, 0, 0.2);
         }
 
         #barreRecherche {
-            padding: 10px 15px;
+            padding: 12px 15px;
             font-size: 15px;
             width: 100%;
             max-width: 380px;
             border-radius: 8px;
             border: 1px solid #ccc;
             margin-bottom: 25px;
-            box-sizing: border-box;
+            outline: none;
+        }
+
+        #barreRecherche:focus {
+            border-color: #ff9800;
         }
 
         #themeContainer {
@@ -181,7 +203,7 @@
         }
 
         .btn-theme {
-            padding: 8px 16px;
+            padding: 10px 18px;
             font-size: 14px;
             border-radius: 6px;
             border: 1px solid #ccc;
@@ -189,12 +211,18 @@
             cursor: pointer;
         }
 
+        .btn-theme:active {
+            transform: scale(0.95);
+        }
+
         #selectCategorie {
-            padding: 8px 12px;
+            padding: 10px 14px;
             font-size: 15px;
             border-radius: 6px;
             border: 1px solid #ccc;
             margin-bottom: 40px;
+            outline: none;
+            background-color: white;
         }
 
         footer {
@@ -203,7 +231,7 @@
         }
 
         footer a {
-            color: #666;
+            color: #888;
             text-decoration: underline;
             font-size: 0.9em;
         }
@@ -211,8 +239,8 @@
 </head>
 <body>
 
-    <!-- Bouton 3 barres (Burger) -->
-    <button class="burger-menu" onclick="toggleMenu()">
+    <!-- Bouton 3 barres -->
+    <button class="burger-menu" onclick="toggleMenu()" aria-label="Ouvrir le menu">
         <div class="burger-bar"></div>
         <div class="burger-bar"></div>
         <div class="burger-bar"></div>
@@ -243,7 +271,7 @@
         <div class="sidebar-section">
             <h3>Le lecteur</h3>
             <ul>
-                <li><a href="generateur-de-faits.html" onclick="toggleMenu();">Générateur de faits</a></li>
+                <li><a href="generateur-de-faits.html">La démarche du projet</a></li>
             </ul>
         </div>
 
@@ -251,7 +279,7 @@
         <div class="sidebar-section">
             <h3>À propos</h3>
             <ul>
-                <li><a href="a-propos.html">Découvrir la présentation</a></li>
+                <li><a href="a-propos.html">Qui suis-je ?</a></li>
             </ul>
         </div>
     </div>
