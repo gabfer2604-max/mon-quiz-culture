@@ -2,43 +2,125 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur de faits - La démarche</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            margin: 0;
+            background-color: #ffffff;
+            color: #000000;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 680px;
+            width: 100%;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #ff9800;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ff9800;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #ff9800;
+            font-size: 1.3rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.05rem;
+            margin-bottom: 15px;
+            color: #333333;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .research-box {
+            background-color: #f9f9f9;
+            border-left: 4px solid #ff9800;
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .btn-retour {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 10px 20px;
+            background-color: #ff9800;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .btn-retour:hover {
+            background-color: #e68a00;
+        }
+    </style>
 </head>
 <body>
-    <h1>Pourquoi ce site ?</h1>
-    <p>Pourquoi le générateur de faits ?
-Apprendre ne signifie pas forcément rester assis devant un manuel pendant des heures. La mémoire fonctionne notamment grâce à la récupération active des informations : lorsqu'on essaie de retrouver une information dans sa mémoire, on contribue à renforcer son apprentissage.
-C'est ce que les chercheurs appellent l'effet de test (testing effect).
-En 2006, les psychologues américains Henry Roediger et Jeffrey Karpicke ont étudié ce phénomène. Leurs expériences ont montré que le fait de tester sa mémoire pouvait favoriser la rétention d'informations sur le long terme, parfois davantage que de simplement réétudier le même contenu.
-C'est sur cette idée que s'inspire Mon Quiz Culture.
-🧠 Apprendre sans avoir l'impression d'apprendre
-Le principe est simple :
-1. Découvrir
-Un fait apparaît aléatoirement à l'écran.
-2. S'interroger
-Votre cerveau reçoit une information nouvelle et peut essayer de la comprendre et de la retenir.
-3. Récupérer
-En revenant régulièrement sur le site et en essayant de vous rappeler les faits déjà rencontrés, vous sollicitez votre mémoire.
-4. Espacer
-Plutôt que d'essayer d'apprendre énormément d'informations en une seule fois, vous pouvez revenir régulièrement découvrir de nouveaux faits. La recherche sur la répétition espacée montre que répartir les apprentissages dans le temps favorise la rétention à long terme. Une méta-analyse de Cepeda et ses collègues portant sur 317 expériences a notamment étudié cet effet.
-🌎 Pourquoi autant de thèmes ?
-La culture générale ne se limite pas à une seule matière.
-Politique, histoire, géographie, sciences, nature, sport, technologie, jeux vidéo, culture, langues…
-Le générateur permet de varier les sujets et de découvrir des informations auxquelles on ne serait pas forcément allé chercher soi-même.
-Cette variété permet également de transformer l'apprentissage en découverte : vous ne savez pas nécessairement quel sera le prochain sujet.
-🎯 L'objectif de Mon Quiz Culture
-Le but n'est pas de remplacer les cours, les livres ou un véritable travail scolaire.
-L'objectif est différent :
-Faire entrer un peu de culture générale dans les moments où l'on n'avait pas prévu d'apprendre.
-Une minute, un clic, un nouveau fait.
-Et peut-être qu'en revenant demain, vous vous en souviendrez encore.
-Et je rajouterais une petite partie « 🔬 Ce que dit la recherche »
-Ça donnerait énormément de crédibilité au site :
-Roediger & Karpicke, 2006 — Test-Enhanced Learning
-Deux psychologues ont montré que le fait de récupérer activement une information en mémoire peut améliorer sa rétention à long terme.
-Cepeda et al., 2006 — Distributed Practice
-Une méta-analyse de 317 expériences montre l'importance de la distribution des apprentissages dans le temps pour la rétention.
-Dunlosky et al., 2013 — Improving Students' Learning With Effective Learning Techniques
-Cette vaste revue de la littérature classe notamment les tests de pratique et la pratique distribuée parmi les techniques d'apprentissage les plus efficaces étudiées.</p>
+
+    <div class="container">
+        <h1>Pourquoi ce site ?</h1>
+
+        <h2>Pourquoi le générateur de faits ?</h2>
+        <p>Apprendre ne signifie pas forcément rester assis devant un manuel pendant des heures. La mémoire fonctionne autrement : c'est ce que les chercheurs appellent l'<strong>effet de test</strong> (<em>testing effect</em>).</p>
+        <p>En 2006, les psychologues américains Henry Roediger et Jeffrey Karpicke ont étudié ce phénomène. Leurs expériences ont démontré que se tester régulièrement est bien plus efficace que relire passivement. C'est de cette idée que s'inspire Mon Quiz Culture.</p>
+
+        <h2>🧠 Apprendre sans avoir l'impression d'apprendre</h2>
+        <p>Le principe est simple :</p>
+        <ol>
+            <li><strong>Découvrir :</strong> Un fait apparaît aléatoirement à l'écran.</li>
+            <li><strong>S'interroger :</strong> Votre cerveau reçoit une information nouvelle et tente de la comprendre et de la retenir.</li>
+            <li><strong>Récupérer :</strong> En revenant régulièrement sur le site, vous sollicitez votre mémoire.</li>
+            <li><strong>Espacer :</strong> Plutôt que d'essayer d'apprendre énormément d'informations d'un coup, vous revenez régulièrement quelques secondes.</li>
+        </ol>
+
+        <h2>🔍 Pourquoi autant de thèmes ?</h2>
+        <p>La culture générale ne se limite pas à une seule matière. Politique, histoire, géographie, sciences, nature, sport, technologie, jeux vidéo, musique...</p>
+        <p>Le générateur permet de varier les sujets et de découvrir des informations auxquelles on ne s'intéresserait pas forcément au départ. Cette variété transforme l'apprentissage en découverte !</p>
+
+        <h2>🎯 L'objectif de Mon Quiz Culture</h2>
+        <p>Le but n'est pas de remplacer les cours, les livres ou un véritable travail scolaire. L'objectif est différent : faire entrer un peu de culture générale dans les moments où l'on n'avait pas prévu d'apprendre.</p>
+        <p>Une minute, un clic, un nouveau fait. Et peut-être qu'en revenant demain, vous vous en souviendrez encore.</p>
+
+        <div class="research-box">
+            <h2>📑 Ce que dit la recherche</h2>
+            <p><strong>Roediger & Karpicke (2006) – <em>Test-Enhanced Learning</em> :</strong><br>
+            Deux psychologues ont montré que le fait de récupérer activement une information en mémoire améliore sa rétention à long terme.</p>
+            
+            <p><strong>Cepeda et al. (2006) – <em>Distributed Practice</em> :</strong><br>
+            Une méta-analyse de 317 expériences montre l'importance de la distribution des apprentissages dans le temps plutôt que l'apprentissage concentré.</p>
+            
+            <p><strong>Dunlosky et al. (2013) – <em>Improving Students' Learning With Effective Learning Techniques</em> :</strong><br>
+            Cette vaste revue de la littérature classe notamment les tests de pratique et la pratique distribuée parmi les techniques d'apprentissage les plus efficaces.</p>
+        </div>
+
+        <a href="index.html" class="btn-retour">← Retour au site</a>
+    </div>
+
 </body>
 </html>
