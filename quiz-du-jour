@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz du Jour - Mon Quiz Culture</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.015s ease, color 0.015s ease;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            background-color: #ffffff;
+            color: #222222;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .date-badge {
+            background-color: #fff3e0;
+            color: #e65100;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #ff9800;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            background-color: #f8f9fa;
+            border: 2px solid #ff9800;
+            border-radius: 12px;
+            padding: 25px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .question-texte {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .btn-reponse {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .btn-reponse:active {
+            transform: scale(0.96);
+        }
+
+        .reponse-box {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .btn-retour {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="date-badge" id="dateAujourdhui">---</div>
+        <h1>Le Quiz du Jour</h1>
+
+        <div class="question-box">
+            <div class="question-texte" id="questionDuJour">Chargement de la question...</div>
+            
+            <button class="btn-reponse" onclick="afficherReponse()">Voir la réponse</button>
+            
+            <div class="reponse-box" id="reponseDuJour"></div>
+        </div>
+
+        <a href="index.html" class="btn-retour">← Retour à l'accueil</a>
+    </div>
+
+    <script>
+        // 1. Ta liste de 365 questions/réponses (ajoute tes 365 questions ici)
+        const quiz365 = [
+            { q: "Quelle est la capitale officielle du Brésil ?", r: "Brasília" },
+            { q: "En quelle année a eu lieu la Révolution française ?", r: "1789" },
+            { q: "Quel est l'élément chimique représenté par le symbole 'O' ?", r: "L'Oxygène" },
+            { q: "Quel océan borde la côte ouest de la France ?", r: "L'océan Atlantique" },
+            { q: "Quel est l'animal terrestre le plus rapide au monde ?", r: "Le guépard" }
+            // Rajoute toutes tes questions à la suite jusqu'à 365...
+        ];
+
+        // 2. Fonction pour trouver le numéro du jour de l'année (1 à 365)
+        function getJourDeLAnnee() {
+            const maintenant = new Date();
+            const debutAnnee = new Date(maintenant.getFullYear(), 0, 0);
+            const diff = maintenant - debutAnnee;
+            const unJour = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / unJour);
+        }
+
+        // 3. Affichage de la date et de la question du jour
+        function chargerQuiz() {
+            const dateAujourdhui = new Date();
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateAujourdhui').textContent = dateAujourdhui.toLocaleDateString('fr-FR', optionsDate);
+
+            const indexJour = getJourDeLAnnee() % quiz365.length;
+            const quizActuel = quiz365[indexJour];
+
+            document.getElementById('questionDuJour').textContent = quizActuel.q;
+            document.getElementById('reponseDuJour').textContent = "Réponse : " + quizActuel.r;
+        }
+
+        function afficherReponse() {
+            const reponseBox = document.getElementById('reponseDuJour');
+            reponseBox.style.display = 'block';
+        }
+
+        // Charger au lancement
+        chargerQuiz();
+    </script>
+
+</body>
+</html>
