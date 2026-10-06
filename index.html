@@ -234,44 +234,48 @@
             text-decoration: underline;
             font-size: 0.9em;
 
-            /* Styles pour le menu repliable */
-        details summary.menu-title {
-            color: #ffaa00;
-            font-weight: bold;
-            cursor: pointer;
-            list-style: none;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
+            /* Style du menu repliable */
+.menu-group {
+    margin-bottom: 15px;
+}
 
-        details summary::-webkit-details-marker {
-            display: none;
-        }
+summary.menu-title {
+    color: #ffaa00;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    margin-bottom: 8px;
+}
 
-        details summary.menu-title::after {
-            content: " ▾";
-            font-size: 0.8em;
-        }
+summary.menu-title::-webkit-details-marker {
+    display: none;
+}
 
-        details[open] summary.menu-title::after {
-            content: " ▴";
-        }
+summary.menu-title::after {
+    content: " ▾";
+    font-size: 0.8rem;
+}
 
-        .submenu {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-        }
+details[open] summary.menu-title::after {
+    content: " ▴";
+}
 
-        .submenu li {
-            margin: 8px 0;
-        }
+.submenu {
+    list-style: none;
+    padding-left: 10px;
+    margin: 0;
+}
 
-        .submenu a {
-            color: white;
-            text-decoration: none;
-        }
-        }
+.submenu li {
+    margin: 8px 0;
+}
+
+.submenu a {
+    color: white;
+    text-decoration: none;
+}
     </style>
 </head>
 <body>
