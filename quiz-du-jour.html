@@ -608,19 +608,38 @@ function validerReponse() {
     const distance = calculerDistance(propreSaisie, propreBonne);
     const tolerance = propreBonne.length > 5 ? 2 : 1;
 
+    // Date du jour au format YYYY-MM-DD
+    const aujourdhui = new Date().toISOString().split('T')[0];
+    const dernierQuizReussi = localStorage.getItem('quiz_dernier_succes');
+
     reponseBox.style.display = 'block';
 
     if (distance <= tolerance) {
+        // VÉRIFICATION : Déjà joué et réussi aujourd'hui ?
+        if (dernierQuizReussi === aujourdhui) {
+            reponseBox.style.backgroundColor = '#e2e3e5';
+            reponseBox.style.color = '#383d41';
+            reponseBox.innerHTML = `🎉 <strong>Bonne réponse !</strong> Vous avez déjà récupéré vos 10 points du jour. Revenez demain !`;
+            return;
+        }
+
+        // BONNE RÉPONSE (Première fois du jour)
         reponseBox.style.backgroundColor = '#d4edda';
         reponseBox.style.color = '#155724';
         reponseBox.innerHTML = `🎉 <strong>Bravo !</strong> La réponse était bien : <strong>${bonneReponse}</strong> (+10 pts)`;
 
+        // Enregistre la date pour bloquer les tentatives suivantes
+        localStorage.setItem('quiz_dernier_succes', aujourdhui);
+
+        // Ajout des points
         let score = parseInt(localStorage.getItem('quiz_score_total') || 0) + 10;
         let nbQuiz = parseInt(localStorage.getItem('quiz_count') || 0) + 1;
         localStorage.setItem('quiz_score_total', score);
         localStorage.setItem('quiz_count', nbQuiz);
         chargerScoreMenu();
+
     } else {
+        // MAUVAISE RÉPONSE
         reponseBox.style.backgroundColor = '#f8d7da';
         reponseBox.style.color = '#721c24';
         reponseBox.innerHTML = `❌ <strong>Dommage !</strong> La bonne réponse était : <strong>${bonneReponse}</strong>`;
