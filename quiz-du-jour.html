@@ -112,10 +112,10 @@
 <div class="question-box">
     <div class="question-texte" id="questionDuJour">Chargement de la question...</div>
     
-    <div style="margin: 20px 0;">
-        <input type="text" id="reponseUtilisateur" placeholder="Tapez votre réponse ici..." style="padding: 10px; width: 80%; max-width: 300px; border-radius: 6px; border: 1px solid #ccc;">
-        <button class="btn-reponse" onclick="validerReponse()">Valider</button>
-    </div>
+    <div style="margin: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+    <input type="text" id="reponseUtilisateur" placeholder="Tapez votre réponse ici..." style="padding: 12px; width: 90%; max-width: 300px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; text-align: center; box-sizing: border-box;">
+    <button class="btn-reponse" onclick="validerReponse()" style="width: 90%; max-width: 300px; padding: 12px; border-radius: 8px;">Valider</button>
+</div>
 
     <div class="reponse-box" id="reponseDuJour" style="display: none; padding: 15px; border-radius: 8px; margin-top: 15px;"></div>
 </div>
