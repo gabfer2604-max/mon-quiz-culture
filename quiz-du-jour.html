@@ -557,9 +557,18 @@
         }
 
         function afficherReponse() {
-            const reponseBox = document.getElementById('reponseDuJour');
-            reponseBox.style.display = 'block';
-        }
+    const reponseBox = document.getElementById('reponseDuJour');
+    reponseBox.style.display = 'block';
+
+    // AJOUT DU CODE POUR COMPTER LES POINTS
+    let score = parseInt(localStorage.getItem('quiz_score_total') || 0) + 10;
+    let nbQuiz = parseInt(localStorage.getItem('quiz_count') || 0) + 1;
+
+    localStorage.setItem('quiz_score_total', score);
+    localStorage.setItem('quiz_count', nbQuiz);
+
+    chargerScoreMenu();
+}
 
         // Charger au lancement
         chargerQuiz();
