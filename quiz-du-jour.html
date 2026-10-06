@@ -567,20 +567,67 @@
             document.getElementById('reponseDuJour').textContent = "Réponse : " + quizActuel.r;
         }
 
-        function afficherReponse() {
-    const reponseBox = document.getElementById('reponseDuJour');
-    reponseBox.style.display = 'block';
-
-    // AJOUT DU CODE POUR COMPTER LES POINTS
-    let score = parseInt(localStorage.getItem('quiz_score_total') || 0) + 10;
-    let nbQuiz = parseInt(localStorage.getItem('quiz_count') || 0) + 1;
-
-    localStorage.setItem('quiz_score_total', score);
-    localStorage.setItem('quiz_count', nbQuiz);
-
-    chargerScoreMenu();
+        // Nettoyage : minuscules, suppression des accents et des articles
+function nettoyerTexte(chaine) {
+    return chaine
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/^(le|la|les|l'|une?|des)\s+/i, "")
+        .trim();
 }
 
+// Tolérance aux fautes de frappe (distance de Levenshtein)
+function calculerDistance(a, b) {
+    const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+    for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            matrix[i][j] = Math.min(
+                matrix[i - 1][j] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j - 1] + cost
+            );
+        }
+    }
+    return matrix[a.length][b.length];
+}
+
+function validerReponse() {
+    const saisie = document.getElementById('reponseUtilisateur').value;
+    const reponseBox = document.getElementById('reponseDuJour');
+    
+    if (!saisie.trim()) return;
+
+    const indexJour = getJourDeLAnnee() % quiz365.length;
+    const bonneReponse = quiz365[indexJour].r;
+
+    const propreSaisie = nettoyerTexte(saisie);
+    const propreBonne = nettoyerTexte(bonneReponse);
+
+    const distance = calculerDistance(propreSaisie, propreBonne);
+    const tolerance = propreBonne.length > 5 ? 2 : 1;
+
+    reponseBox.style.display = 'block';
+
+    if (distance <= tolerance) {
+        reponseBox.style.backgroundColor = '#d4edda';
+        reponseBox.style.color = '#155724';
+        reponseBox.innerHTML = `🎉 <strong>Bravo !</strong> La réponse était bien : <strong>${bonneReponse}</strong> (+10 pts)`;
+
+        let score = parseInt(localStorage.getItem('quiz_score_total') || 0) + 10;
+        let nbQuiz = parseInt(localStorage.getItem('quiz_count') || 0) + 1;
+        localStorage.setItem('quiz_score_total', score);
+        localStorage.setItem('quiz_count', nbQuiz);
+        chargerScoreMenu();
+    } else {
+        reponseBox.style.backgroundColor = '#f8d7da';
+        reponseBox.style.color = '#721c24';
+        reponseBox.innerHTML = `❌ <strong>Dommage !</strong> La bonne réponse était : <strong>${bonneReponse}</strong>`;
+    }
+}
         // Charger au lancement
         chargerQuiz();
         function chargerScoreMenu() {
