@@ -111,8 +111,13 @@
 <!-- BLOC DU QUIZ À REMETTRE HERE -->
 <div class="question-box">
     <div class="question-texte" id="questionDuJour">Chargement de la question...</div>
-    <button class="btn-reponse" onclick="afficherReponse()">Voir la réponse</button>
-    <div class="reponse-box" id="reponseDuJour" style="display: none;"></div>
+    
+    <div style="margin: 20px 0;">
+        <input type="text" id="reponseUtilisateur" placeholder="Tapez votre réponse ici..." style="padding: 10px; width: 80%; max-width: 300px; border-radius: 6px; border: 1px solid #ccc;">
+        <button class="btn-reponse" onclick="validerReponse()">Valider</button>
+    </div>
+
+    <div class="reponse-box" id="reponseDuJour" style="display: none; padding: 15px; border-radius: 8px; margin-top: 15px;"></div>
 </div>
 
 <a href="index.html" class="btn-retour">← Retour à l'accueil</a>
