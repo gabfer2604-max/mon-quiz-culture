@@ -197,6 +197,30 @@ details[open] summary.menu-title::after {
             box-shadow: 0 2px 6px rgba(255, 152, 0, 0.2);
         }
 
+        #btnPartage {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: #25D366;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 25px auto;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+    user-select: none;
+}
+
+#btnPartage:active {
+    transform: scale(0.92);
+    box-shadow: 0 2px 6px rgba(37, 211, 102, 0.2);
+}
+
         #barreRecherche {
             padding: 12px 15px;
             font-size: 15px;
@@ -367,10 +391,11 @@ details ul a:hover {
     <h1 id="titre">Texte original</h1>
 
     <button id="monBouton">Cliquer ici</button>
-    <button id="btnPartage" onclick="partagerFaitActuel()">📲 Partager</button>
 
     <input type="text" id="barreRecherche" placeholder="Rechercher une info...">
     <div id="resultatsRecherche" style="margin-bottom: 20px; text-align: center;"></div>
+
+    <button id="btnPartage" onclick="partagerFaitActuel()">📲 Partager</button>
 
     <div id="themeContainer">
         <button class="btn-theme" onclick="changerTheme('clair')">Clair</button>
