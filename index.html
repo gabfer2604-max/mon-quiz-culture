@@ -396,7 +396,7 @@ details ul a:hover {
     <h2 id="titre" style="min-height: 50px; padding: 10px;">Clique sur le bouton pour afficher un fait !</h2>
     
     <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 15px;">
-        <button id="monBouton" onclick="genererFait()" style="padding: 10px 20px; font-weight: bold; cursor: pointer;">
+        <button id="monBouton" style="padding: 10px 20px; font-weight: bold; cursor: pointer;">
             🎲 Autre fait
         </button>
         
@@ -492,6 +492,24 @@ details ul a:hover {
             dernierIndex = auHasard;
             titre.textContent = infosFiltrees[auHasard].texte;
         });
+        function partagerFaitActuel() {
+    const texteFait = document.getElementById('titre').textContent;
+    const urlSite = window.location.origin;
+
+    const messagePartage = `💡 *Le saviez-vous ?*\n\n« ${texteFait} »\n\n👉 Découvre d'autres faits sur : ${urlSite}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: 'Le saviez-vous ?',
+            text: messagePartage,
+            url: urlSite
+        }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(messagePartage).then(() => {
+            alert("📋 Fait copié dans le presse-papier !");
+        });
+    }
+}
 
         const barreRecherche = document.getElementById('barreRecherche');
         const resultatsRecherche = document.getElementById('resultatsRecherche');
