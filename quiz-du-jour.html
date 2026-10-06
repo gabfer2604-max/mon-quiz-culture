@@ -556,17 +556,15 @@
 
         // 3. Affichage de la date et de la question du jour
         function chargerQuiz() {
-            const dateAujourdhui = new Date();
-            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('dateAujourdhui').textContent = dateAujourdhui.toLocaleDateString('fr-FR', optionsDate);
+    const dateAujourdhui = new Date();
+    const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dateAujourdhui').textContent = dateAujourdhui.toLocaleDateString('fr-FR', optionsDate);
 
-            const indexJour = getJourDeLAnnee() % quiz365.length;
-            const quizActuel = quiz365[indexJour];
+    const indexJour = getJourDeLAnnee() % quiz365.length;
+    const quizActuel = quiz365[indexJour];
 
-            document.getElementById('questionDuJour').textContent = quizActuel.q;
-            document.getElementById('reponseDuJour').textContent = "Réponse : " + quizActuel.r;
-        }
-
+    document.getElementById('questionDuJour').textContent = quizActuel.q;
+}
         // Nettoyage : minuscules, suppression des accents et des articles
 function nettoyerTexte(chaine) {
     return chaine
@@ -628,6 +626,7 @@ function validerReponse() {
         reponseBox.innerHTML = `❌ <strong>Dommage !</strong> La bonne réponse était : <strong>${bonneReponse}</strong>`;
     }
 }
+        
         // Charger au lancement
         chargerQuiz();
         function chargerScoreMenu() {
