@@ -563,6 +563,18 @@
 
         // Charger au lancement
         chargerQuiz();
+        function chargerScoreMenu() {
+    const scoreSauvegarde = localStorage.getItem('quiz_score_total') || 0;
+    const quizCountSauvegarde = localStorage.getItem('quiz_count') || 0;
+
+    const elemScore = document.getElementById('total-score');
+    const elemCount = document.getElementById('quiz-count');
+
+    if (elemScore) elemScore.textContent = scoreSauvegarde;
+    if (elemCount) elemCount.textContent = quizCountSauvegarde;
+}
+
+window.addEventListener('DOMContentLoaded', chargerScoreMenu);
     </script>
 
 </body>
