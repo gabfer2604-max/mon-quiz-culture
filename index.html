@@ -344,6 +344,19 @@ details ul a:hover {
         <summary class="menu-title">Le lecteur</summary>
         <ul class="submenu">
             <li><a href="generateur-de-faits.html">La démarche du projet</a></li>
+            <li>
+                <a href="quiz-du-jour.html">🎯 Le Quiz du Jour</a>
+                <!-- Petit affichage du score intégré au menu -->
+                <div id="menu-score" style="font-size: 0.85rem; color: #ffaa00; margin-top: 4px; padding-left: 5px;">
+                    ⭐ Score : <span id="total-score">0</span> pts (<span id="quiz-count">0</span> joué)
+                </div>
+            </li>
+        </ul>
+    </details>
+    <details open class="menu-group">
+        <summary class="menu-title">Le lecteur</summary>
+        <ul class="submenu">
+            <li><a href="generateur-de-faits.html">La démarche du projet</a></li>
             <li><a href="quiz-du-jour.html">🎯 Le Quiz du Jour</a></li>
         </ul>
     </details>
@@ -501,6 +514,18 @@ details ul a:hover {
                 document.body.classList.add('theme-bleu');
             }
         }
+        function chargerScoreMenu() {
+    const scoreSauvegarde = localStorage.getItem('quiz_score_total') || 0;
+    const quizCountSauvegarde = localStorage.getItem('quiz_count') || 0;
+
+    const elemScore = document.getElementById('total-score');
+    const elemCount = document.getElementById('quiz-count');
+
+    if (elemScore) elemScore.textContent = scoreSauvegarde;
+    if (elemCount) elemCount.textContent = quizCountSauvegarde;
+}
+
+window.addEventListener('DOMContentLoaded', chargerScoreMenu);
     </script>
 </body>
 </html>
