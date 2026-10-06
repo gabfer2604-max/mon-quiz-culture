@@ -276,6 +276,20 @@ details[open] summary.menu-title::after {
     color: white;
     text-decoration: none;
 }
+
+            /* Forcer la couleur blanche sur les liens des sous-menus */
+.submenu a,
+details ul a {
+    color: white !important;
+    text-decoration: none;
+}
+
+/* Changement au survol de la souris */
+.submenu a:hover,
+details ul a:hover {
+    color: #ffaa00; /* Devient orange au survol */
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
