@@ -544,7 +544,8 @@ details ul a:hover {
         });
         function partagerFaitActuel() {
     const texteFait = document.getElementById('titre').textContent;
-    const urlSite = window.location.origin;
+    // On utilise directement l'URL complète de la page actuelle
+    const urlSite = window.location.href;
 
     const messagePartage = `💡 *Le saviez-vous ?*\n\n« ${texteFait} »\n\n👉 Découvre d'autres faits sur : ${urlSite}`;
 
@@ -560,7 +561,6 @@ details ul a:hover {
         });
     }
 }
-
         const barreRecherche = document.getElementById('barreRecherche');
         const resultatsRecherche = document.getElementById('resultatsRecherche');
 
