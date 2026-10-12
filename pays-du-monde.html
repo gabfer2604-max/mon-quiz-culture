@@ -839,10 +839,13 @@
           const match = country.names.some(nom => nettoyerTexte(nom) === saisieNettoyee);
 
           if (match) {
-            if (el) el.classList.add("found", "flash");
-            foundCount++;
-            scoreDisplay.textContent = `${foundCount} / ${countries.length}`;
-            input.value = ""; // Vide le champ instantanément dès que c'est bon
+          if (el) {
+            el.style.fill = 'var(--green)'; // Force la couleur verte sur le chemin SVG
+            el.classList.add("found", "flash");
+          }
+          foundCount++;
+          scoreDisplay.textContent = `${foundCount} / ${countries.length}`;
+          input.value = ""; // Vide le champ instantanément dès que c'est bon
 
             if (foundCount === countries.length) endGame(true);
           }
