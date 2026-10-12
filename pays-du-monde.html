@@ -854,7 +854,7 @@
       timerDisplay.textContent = `${min}:${sec}`;
     }
 
-    input.addEventListener("input", (e) => {
+   input.addEventListener("input", (e) => {
       if (!isPlaying) return;
 
       const saisieNettoyee = nettoyerTexte(e.target.value);
@@ -867,7 +867,7 @@
           const match = country.names.some(nom => nettoyerTexte(nom) === saisieNettoyee);
 
           if (match) {
-            // Force la couleur verte sur l'élément principal et tous ses composants internes (path, polygon, etc.)
+            // Colorie l'élément et tous ses enfants (path, polygon, rect) en vert
             el.style.fill = '#22c55e';
             el.querySelectorAll('path, polygon, rect').forEach(p => p.style.fill = '#22c55e');
             el.classList.add("found");
@@ -899,13 +899,6 @@
         }
       });
     }
-      });
-
-      alert(completed && foundCount === countries.length 
-        ? "🏆 Incroyable ! Tu as trouvé tous les pays du monde !" 
-        : `Partie terminée ! Score : ${foundCount} / ${countries.length}`);
-    }
   </script>
 </body>
 </html>
-
