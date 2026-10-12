@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz : Les Pays du Monde - CultureQuiz</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --accent: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --gray-map: #334155;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header {
+      text-align: center;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    /* Tableau de bord */
+    .dashboard {
+      display: flex;
+      gap: 25px;
+      background: var(--card-bg);
+      padding: 15px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      margin-bottom: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .input-zone {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 12px 16px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: 2px solid #475569;
+      background: #0f172a;
+      color: white;
+      outline: none;
+      width: 260px;
+      transition: border 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .btn {
+      padding: 12px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+    }
+
+    .btn-start { background: var(--green); color: white; }
+    .btn-giveup { background: var(--red); color: white; }
+    .btn:active { transform: scale(0.95); }
+
+    /* Conteneur de la carte */
+    .map-container {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    svg path {
+      fill: var(--gray-map);
+      stroke: #0f172a;
+      stroke-width: 0.6;
+      transition: fill 0.3s ease;
+      cursor: pointer;
+    }
+
+    svg path.found { fill: var(--green) !important; }
+    svg path.missed { fill: var(--red) !important; }
+
+    @keyframes pulse {
+      0% { fill: #86efac; }
+      100% { fill: var(--green); }
+    }
+    .flash { animation: pulse 0.5s ease-out; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🌍 Quiz : Les Pays du Monde</h1>
+    <p>Trouve le maximum de pays en 15 minutes. Tape le nom d'un pays pour le valider automatiquement !</p>
+  </div>
+
+  <div class="dashboard">
+    <div class="stat-box">
+      <div class="stat-val" id="timer">15:00</div>
+      <div class="stat-label">Temps restant</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-val" id="score">0 / 196</div>
+      <div class="stat-label">Pays trouvés</div>
+    </div>
+
+    <div class="input-zone">
+      <input type="text" id="countryInput" placeholder="Tape un pays..." disabled autocomplete="off">
+      <button class="btn btn-start" id="startBtn" onclick="toggleGame()">Démarrer</button>
+    </div>
+  </div>
+
+  <div class="map-container">
+    <svg viewBox="0 0 1000 500" width="100%" height="auto">
+      <path id="fr" d="M 480 140 L 495 138 L 500 150 L 485 155 Z" title="France"></path>
+      <path id="es" d="M 465 155 L 485 155 L 480 170 L 460 168 Z" title="Espagne"></path>
+      <path id="de" d="M 495 125 L 510 125 L 512 140 L 495 138 Z" title="Allemagne"></path>
+      <path id="it" d="M 500 152 L 510 155 L 515 175 L 505 170 Z" title="Italie"></path>
+      <path id="us" d="M 150 150 L 250 150 L 240 200 L 140 180 Z" title="États-Unis"></path>
+      <path id="gb" d="M 465 120 L 480 120 L 478 135 L 463 132 Z" title="Royaume-Uni"></path>
+      <path id="id" d="M 750 280 L 800 280 L 790 300 L 740 300 Z" title="Indonésie"></path>
+    </svg>
+    <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 15px;">
+      * Moteur de recherche ultra-flexible : les accents, majuscules, espaces et tirets sont ignorés automatiquement.
+    </p>
+  </div>
+
+  <script>
+    // 1. Fonction de nettoyage automatique (retire accents, majuscules, espaces, tirets et apostrophes)
+    function nettoyerTexte(str) {
+      if (!str) return "";
+      return str
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Supprime tous les accents (é -> e, ô -> o, etc.)
+        .replace(/[^a-z0-9]/g, ""); // Supprime les espaces, tirets et apostrophes
+    }
+
+    // 2. Base de données complète des 196 pays et de leurs synonymes en français
+    const countries = [
+      { id: "fr", names: ["france", "la france"] },
+      { id: "af", names: ["afghanistan"] },
+      { id: "al", names: ["albanie"] },
+      { id: "dz", names: ["algerie"] },
+      { id: "ad", names: ["andorre"] },
+      { id: "ao", names: ["angola"] },
+      { id: "ag", names: ["antigua-et-barbuda", "antigua"] },
+      { id: "ar", names: ["argentine"] },
+      { id: "am", names: ["armenie"] },
+      { id: "au", names: ["australie"] },
+      { id: "at", names: ["autriche"] },
+      { id: "az", names: ["azerbaidjan"] },
+      { id: "bs", names: ["bahamas"] },
+      { id: "bh", names: ["bahrein"] },
+      { id: "bd", names: ["bangladesh"] },
+      { id: "bb", names: ["barbade"] },
+      { id: "by", names: ["belarus", "bielorussie"] },
+      { id: "be", names: ["belgique"] },
+      { id: "bz", names: ["belize"] },
+      { id: "bj", names: ["benin"] },
+      { id: "bt", names: ["bhoutan"] },
+      { id: "bo", names: ["bolivie"] },
+      { id: "ba", names: ["bosnie-herzegovine", "bosnie"] },
+      { id: "bw", names: ["botswana"] },
+      { id: "br", names: ["bresil"] },
+      { id: "bn", names: ["brunei"] },
+      { id: "bg", names: ["bulgarie"] },
+      { id: "bf", names: ["burkina faso", "burkina"] },
+      { id: "bi", names: ["burundi"] },
+      { id: "kh", names: ["cambodge"] },
+      { id: "cm", names: ["cameroun"] },
+      { id: "ca", names: ["canada"] },
+      { id: "cv", names: ["cap-vert", "cap vert"] },
+      { id: "cf", names: ["centrafrique", "republique centrafricaine"] },
+      { id: "td", names: ["tchad"] },
+      { id: "cl", names: ["chili"] },
+      { id: "cn", names: ["chine"] },
+      { id: "co", names: ["colombie"] },
+      { id: "km", names: ["comores"] },
+      { id: "cg", names: ["congo"] },
+      { id: "cd", names: ["congo-kinshasa", "rdc", "republique democratique du congo"] },
+      { id: "cr", names: ["costa rica"] },
+      { id: "ci", names: ["cote d'ivoire"] },
+      { id: "hr", names: ["croatie"] },
+      { id: "cu", names: ["cuba"] },
+      { id: "cy", names: ["chypre"] },
+      { id: "cz", names: ["tchequie", "republique tcheque"] },
+      { id: "dk", names: ["danemark"] },
+      { id: "dj", names: ["djibouti"] },
+      { id: "dm", names: ["dominique"] },
+      { id: "do", names: ["republique dominicaine"] },
+      { id: "ec", names: ["equateur"] },
+      { id: "eg", names: ["egypte"] },
+      { id: "sv", names: ["salvador"] },
+      { id: "gq", names: ["guinee equatoriale"] },
+      { id: "er", names: ["erythree"] },
+      { id: "ee", names: ["estonie"] },
+      { id: "sz", names: ["eswatini", "swaziland"] },
+      { id: "et", names: ["ethiopie"] },
+      { id: "fj", names: ["fidji"] },
+      { id: "fi", names: ["finlande"] },
+      { id: "ga", names: ["gabon"] },
+      { id: "gm", names: ["gambie"] },
+      { id: "ge", names: ["georgie"] },
+      { id: "de", names: ["allemagne"] },
+      { id: "gh", names: ["ghana"] },
+      { id: "gr", names: ["grece"] },
+      { id: "gd", names: ["grenade"] },
+      { id: "gt", names: ["guatemala"] },
+      { id: "gn", names: ["guinee"] },
+      { id: "gw", names: ["guinee-bissau"] },
+      { id: "gy", names: ["guyana"] },
+      { id: "ht", names: ["haiti"] },
+      { id: "hn", names: ["honduras"] },
+      { id: "hu", names: ["hongrie"] },
+      { id: "is", names: ["islande"] },
+      { id: "in", names: ["inde"] },
+      { id: "id", names: ["indonesie"] },
+      { id: "ir", names: ["iran"] },
+      { id: "iq", names: ["irak"] },
+      { id: "ie", names: ["irlande"] },
+      { id: "il", names: ["israel"] },
+      { id: "it", names: ["italie"] },
+      { id: "jm", names: ["jamaique"] },
+      { id: "jp", names: ["japon"] },
+      { id: "jo", names: ["jordanie"] },
+      { id: "kz", names: ["kazakhstan"] },
+      { id: "ke", names: ["kenya"] },
+      { id: "ki", names: ["kiribati"] },
+      { id: "kw", names: ["koweit"] },
+      { id: "kg", names: ["kirghizistan"] },
+      { id: "la", names: ["laos"] },
+      { id: "lv", names: ["lettonie"] },
+      { id: "lb", names: ["liban"] },
+      { id: "ls", names: ["lesotho"] },
+      { id: "lr", names: ["liberia"] },
+      { id: "ly", names: ["libye"] },
+      { id: "li", names: ["liechtenstein"] },
+      { id: "lt", names: ["lituanie"] },
+      { id: "lu", names: ["luxembourg"] },
+      { id: "mg", names: ["madagascar"] },
+      { id: "mw", names: ["malawi"] },
+      { id: "my", names: ["malaisie"] },
+      { id: "mv", names: ["maldives"] },
+      { id: "ml", names: ["mali"] },
+      { id: "mt", names: ["malte"] },
+      { id: "mh", names: ["iles marshall"] },
+      { id: "mr", names: ["mauritanie"] },
+      { id: "mu", names: ["maurice"] },
+      { id: "mx", names: ["mexique"] },
+      { id: "fm", names: ["micronesie"] },
+      { id: "md", names: ["moldavie"] },
+      { id: "mc", names: ["monaco"] },
+      { id: "mn", names: ["mongolie"] },
+      { id: "me", names: ["montenegro"] },
+      { id: "ma", names: ["maroc"] },
+      { id: "mz", names: ["mozambique"] },
+      { id: "mm", names: ["myanmar", "birmanie"] },
+      { id: "na", names: ["namibie"] },
+      { id: "nr", names: ["nauru"] },
+      { id: "np", names: ["nepal"] },
+      { id: "nl", names: ["pays-bas", "hollande"] },
+      { id: "nz", names: ["nouvelle-zelande"] },
+      { id: "ni", names: ["nicaragua"] },
+      { id: "ne", names: ["niger"] },
+      { id: "ng", names: ["nigeria"] },
+      { id: "kp", names: ["coree du nord"] },
+      { id: "no", names: ["norvege"] },
+      { id: "om", names: ["oman"] },
+      { id: "pk", names: ["pakistan"] },
+      { id: "pw", names: ["palaos"] },
+      { id: "ps", names: ["palestine"] },
+      { id: "pa", names: ["panama"] },
+      { id: "pg", names: ["papouasie-nouvelle-guinee"] },
+      { id: "py", names: ["paraguay"] },
+      { id: "pe", names: ["perou"] },
+      { id: "ph", names: ["philippines"] },
+      { id: "pl", names: ["pologne"] },
+      { id: "pt", names: ["portugal"] },
+      { id: "qa", names: ["qatar"] },
+      { id: "ro", names: ["roumanie"] },
+      { id: "ru", names: ["russie"] },
+      { id: "rw", names: ["rwanda"] },
+      { id: "kn", names: ["saint-kitts-et-nevis"] },
+      { id: "lc", names: ["sainte-lucie"] },
+      { id: "vc", names: ["saint-vincent-et-les-grenadines"] },
+      { id: "ws", names: ["samoa"] },
+      { id: "sm", names: ["saint-marin"] },
+      { id: "st", names: ["sao tome-et-principe"] },
+      { id: "sa", names: ["arabie saoudite"] },
+      { id: "sn", names: ["senegal"] },
+      { id: "rs", names: ["serbie"] },
+      { id: "sc", names: ["seychelles"] },
+      { id: "sl", names: ["sierra leone"] },
+      { id: "sg", names: ["singapour"] },
+      { id: "sk", names: ["slovaquie"] },
+      { id: "si", names: ["slovenie"] },
+      { id: "sb", names: ["iles salomon"] },
+      { id: "so", names: ["somalie"] },
+      { id: "za", names: ["afrique du sud"] },
+      { id: "kr", names: ["coree du sud"] },
+      { id: "ss", names: ["soudan du sud"] },
+      { id: "lk", names: ["sri lanka"] },
+      { id: "sd", names: ["soudan"] },
+      { id: "sr", names: ["suriname"] },
+      { id: "se", names: ["suede"] },
+      { id: "ch", names: ["suisse"] },
+      { id: "sy", names: ["syrie"] },
+      { id: "tw", names: ["taiwan"] },
+      { id: "tj", names: ["tadjikistan"] },
+      { id: "tz", names: ["tanzanie"] },
+      { id: "th", names: ["thailande"] },
+      { id: "tl", names: ["timor oriental", "timor-leste"] },
+      { id: "tg", names: ["togo"] },
+      { id: "to", names: ["tonga"] },
+      { id: "tt", names: ["trinite-et-tobago"] },
+      { id: "tn", names: ["tunisie"] },
+      { id: "tr", names: ["turquie"] },
+      { id: "tm", names: ["turkmenistan"] },
+      { id: "tv", names: ["tuvalu"] },
+      { id: "ug", names: ["ouganda"] },
+      { id: "ua", names: ["ukraine"] },
+      { id: "ae", names: ["emirats arabes unis"] },
+      { id: "gb", names: ["royaume-uni", "royaume uni", "uk", "angleterre"] },
+      { id: "us", names: ["etats-unis", "usa"] },
+      { id: "uy", names: ["uruguay"] },
+      { id: "uz", names: ["oubekistan"] },
+      { id: "vu", names: ["vanuatu"] },
+      { id: "va", names: ["vatican"] },
+      { id: "ve", names: ["venezuela"] },
+      { id: "vn", names: ["vietnam"] },
+      { id: "ye", names: ["yemen"] },
+      { id: "zm", names: ["zambie"] },
+      { id: "zw", names: ["zimbabwe"] }
+    ];
+
+    let foundCount = 0;
+    let timeLeft = 900; // 15 minutes en secondes
+    let timerInterval = null;
+    let isPlaying = false;
+
+    const input = document.getElementById("countryInput");
+    const timerDisplay = document.getElementById("timer");
+    const scoreDisplay = document.getElementById("score");
+    const startBtn = document.getElementById("startBtn");
+
+    function toggleGame() {
+      if (!isPlaying) {
+        startGame();
+      } else {
+        endGame(false);
+      }
+    }
+
+    function startGame() {
+      isPlaying = true;
+      foundCount = 0;
+      timeLeft = 900;
+      scoreDisplay.textContent = `0 / ${countries.length}`;
+      
+      // Réinitialiser la carte
+      countries.forEach(c => {
+        const el = document.getElementById(c.id);
+        if (el) el.className.baseVal = "";
+      });
+
+      input.disabled = false;
+      input.value = "";
+      input.focus();
+
+      startBtn.textContent = "Abandonner";
+      startBtn.className = "btn btn-giveup";
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) endGame(true);
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+      const sec = String(timeLeft % 60).padStart(2, '0');
+      timerDisplay.textContent = `${min}:${sec}`;
+    }
+
+    // 3. Écouteur de saisie ultra-indulgent avec nettoyage automatique
+    input.addEventListener("input", (e) => {
+      if (!isPlaying) return;
+
+      const saisieNettoyee = nettoyerTexte(e.target.value);
+      if (!saisieNettoyee) return;
+
+      countries.forEach(country => {
+        const el = document.getElementById(country.id);
+        if (!el || !el.classList.contains("found")) {
+          // Compare la saisie nettoyée avec chaque nom possible du pays (également nettoyé)
+          const match = country.names.some(nom => nettoyerTexte(nom) === saisieNettoyee);
+
+          if (match) {
+            if (el) el.classList.add("found", "flash");
+            foundCount++;
+            scoreDisplay.textContent = `${foundCount} / ${countries.length}`;
+            input.value = ""; // Vide le champ instantanément dès que c'est bon
+
+            if (foundCount === countries.length) endGame(true);
+          }
+        }
+      });
+    });
+
+    function endGame(completed) {
+      isPlaying = false;
+      clearInterval(timerInterval);
+      input.disabled = true;
+
+      startBtn.textContent = "Recommencer";
+      startBtn.className = "btn btn-start";
+
+      // Révéler les pays non trouvés en rouge sur la carte
+      countries.forEach(country => {
+        const el = document.getElementById(country.id);
+        if (el && !el.classList.contains("found")) {
+          el.classList.add("missed");
+        }
+      });
+
+      alert(completed && foundCount === countries.length 
+        ? "🏆 Incroyable ! Tu as trouvé tous les pays du monde !" 
+        : `Partie terminée ! Score : ${foundCount} / ${countries.length}`);
+    }
+  </script>
+</body>
+</html>
