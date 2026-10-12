@@ -548,7 +548,8 @@ details ul a:hover {
         function partagerFaitActuel() {
     const texteFait = document.getElementById('titre').textContent;
     // On utilise directement l'URL complète de la page actuelle
-    const urlSite = window.location.href;
+    // On force l'URL complète avec le sous-dossier GitHub Pages
+    const urlSite = "https://gabfer2604-max.github.io/mon-quiz-culture/";
 
     const messagePartage = `💡 *Le saviez-vous ?*\n\n« ${texteFait} »\n\n👉 Découvre d'autres faits sur : ${urlSite}`;
 
