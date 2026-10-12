@@ -184,7 +184,7 @@
   </div>
 
   <div class="map-container">
-    <?xml version="1.0" encoding="utf-8"?>
+   <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1"
      xmlns="http://www.w3.org/2000/svg"
@@ -593,9 +593,6 @@
     <path id="zw" d="M468.52,578.226l7.755,8.757l5.946,1.513l3.984-6.248l-0.312-8.281l-6.465-3.337l-2.431,1.098l-3.62,5.524l-5.014-0.053L468.52,578.226L468.52,578.226z"/>
 </g>
 </svg>
-    <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 15px;">
-      * Moteur de recherche ultra-flexible : les accents, majuscules, espaces et tirets sont ignorés automatiquement.
-    </p>
   </div>
 
   <script>
@@ -829,7 +826,7 @@
       scoreDisplay.textContent = `0 / ${countries.length}`;
       
       countries.forEach(c => {
-        const el = document.getElementById(c.id);
+        const el = document.getElementById(c.id) || document.getElementById(c.id.toUpperCase()) || document.getElementById(c.id.toLowerCase());
         if (el) {
           el.style.fill = "";
           el.className.baseVal = "";
@@ -863,9 +860,8 @@
       if (!saisieNettoyee) return;
 
       countries.forEach(country => {
-        const el = document.getElementById(country.id) || 
-           document.getElementById(country.id.toUpperCase()) || 
-           document.getElementById(country.id.toLowerCase());
+        const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
+        
         if (!el || !el.classList.contains("found")) {
           const match = country.names.some(nom => nettoyerTexte(nom) === saisieNettoyee);
 
@@ -893,7 +889,7 @@
       startBtn.className = "btn btn-start";
 
       countries.forEach(country => {
-        const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase());
+        const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
         if (el && !el.classList.contains("found")) {
           el.classList.add("missed");
         }
@@ -905,4 +901,5 @@
     }
   </script>
 </body>
+</html>
 </html>
