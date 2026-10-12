@@ -873,6 +873,43 @@
         ? "🏆 Incroyable ! Tu as trouvé tous les pays du monde !" 
         : `Partie terminée ! Score : ${foundCount} / ${countries.length}`);
     }
+    /* --- Adaptation Mobile / Responsive --- */
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+
+    .header h1 {
+      font-size: 1.6rem;
+    }
+
+    .dashboard {
+      flex-direction: column;
+      gap: 15px;
+      padding: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .input-zone {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .map-container {
+      padding: 10px;
+      overflow-x: auto; /* Permet de faire défiler la carte si besoin sur petit écran */
+    }
+  }
   </script>
 </body>
 </html>
