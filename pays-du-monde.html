@@ -867,8 +867,11 @@
 
           if (match) {
             if (el) {
-              el.style.fill = 'var(--green)';
-              el.className.baseVal = "found flash";
+  el.style.fill = 'var(--green)';
+  // Colorie aussi tous les sous-éléments si c'est un groupe <g>
+  el.querySelectorAll('path').forEach(p => p.style.fill = 'var(--green)');
+  el.className.baseVal = "found flash";
+}
             }
             foundCount++;
             scoreDisplay.textContent = `${foundCount} / ${countries.length}`;
@@ -891,7 +894,10 @@
       countries.forEach(country => {
         const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
         if (el && !el.classList.contains("found")) {
-          el.classList.add("missed");
+          if (el && !el.classList.contains("found")) {
+      el.classList.add("missed");
+      el.querySelectorAll('path').forEach(p => p.classList.add("missed"));
+    }
         }
       });
 
