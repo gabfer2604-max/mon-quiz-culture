@@ -830,6 +830,7 @@
         if (el) {
           el.style.fill = "";
           el.className.baseVal = "";
+          el.querySelectorAll('path, polygon, rect').forEach(p => p.style.fill = "");
         }
       });
 
@@ -862,17 +863,15 @@
       countries.forEach(country => {
         const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
         
-        if (!el || !el.classList.contains("found")) {
+        if (el && !el.classList.contains("found")) {
           const match = country.names.some(nom => nettoyerTexte(nom) === saisieNettoyee);
 
           if (match) {
-            if (el) {
-  el.style.fill = 'var(--green)';
-  // Colorie aussi tous les sous-éléments si c'est un groupe <g>
-  el.querySelectorAll('path').forEach(p => p.style.fill = 'var(--green)');
-  el.className.baseVal = "found flash";
-}
-            }
+            // Force la couleur verte sur l'élément principal et tous ses composants internes (path, polygon, etc.)
+            el.style.fill = '#22c55e';
+            el.querySelectorAll('path, polygon, rect').forEach(p => p.style.fill = '#22c55e');
+            el.classList.add("found");
+
             foundCount++;
             scoreDisplay.textContent = `${foundCount} / ${countries.length}`;
             input.value = "";
@@ -894,11 +893,12 @@
       countries.forEach(country => {
         const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
         if (el && !el.classList.contains("found")) {
-          if (el && !el.classList.contains("found")) {
-      el.classList.add("missed");
-      el.querySelectorAll('path').forEach(p => p.classList.add("missed"));
-    }
+          el.style.fill = '#ef4444';
+          el.querySelectorAll('path, polygon, rect').forEach(p => p.style.fill = '#ef4444');
+          el.classList.add("missed");
         }
+      });
+    }
       });
 
       alert(completed && foundCount === countries.length 
