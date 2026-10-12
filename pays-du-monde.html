@@ -863,7 +863,9 @@
       if (!saisieNettoyee) return;
 
       countries.forEach(country => {
-        const el = document.getElementById(country.id);
+        const el = document.getElementById(country.id) || 
+           document.getElementById(country.id.toUpperCase()) || 
+           document.getElementById(country.id.toLowerCase());
         if (!el || !el.classList.contains("found")) {
           const match = country.names.some(nom => nettoyerTexte(nom) === saisieNettoyee);
 
@@ -891,7 +893,7 @@
       startBtn.className = "btn btn-start";
 
       countries.forEach(country => {
-        const el = document.getElementById(country.id);
+        const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase());
         if (el && !el.classList.contains("found")) {
           el.classList.add("missed");
         }
