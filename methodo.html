@@ -1,38 +1,188 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Découvrez 10 méthodes pour apprendre vos leçon plus vite ou retenir une information de manière efficace.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comment apprendre une leçon efficacement | Mon Quiz Culture</title>
-    <!-- Reprends ton fichier CSS habituel ici -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comment apprendre une leçon ? - Mon Quiz Culture</title>
+  <style>
+    :root {
+      --primary: #f39c12;
+      --primary-hover: #d35400;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #2c3e50;
+      --text-muted: #7f8c8d;
+      --border-radius: 12px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header-section h1 {
+      font-size: 2.2rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .header-section p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    .methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .method-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      border-top: 4px solid var(--primary);
+    }
+
+    .method-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .method-number {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #e0e0e0;
+    }
+
+    .method-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .cta-container {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: var(--primary);
+      color: #ffffff;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 30px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+    }
+
+    .cta-button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.03);
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Comment apprendre et retenir une leçon rapidement ?</h1>
-    </header>
-    
-    <main>
-        <section>
-    <h2>Retenir une information ou une leçon</h2>
-    <p>Voici 10 méthodes de mémorisation qui peuvent t'aider à retenir une leçon ou une nouvelle information :</p>
-    
-    <ol>
-        <li><strong>Les Répétitions espacées :</strong> Apprends ta leçon à un moment de la journée puis mets-toi des alertes à d'autres moments de la journée pour la relire toujours en silence.</li>
-        <li><strong>Rappel actif :</strong> Lis ton cours, referme ton cahier ou tourne ta feuille, essaie de tout réécrire de mémoire sans regarder puis vérifie. Tu peux répéter le processus.</li>
-        <li><strong>Technique de Feynman :</strong> Explique ta leçon simplement à voix haute comme si tu étais un enfant et regarde les endroits où tu bloques pour savoir ce que tu ne comprends pas.</li>
-        <li><strong>Carte mentale :</strong> Une méthode connue qui consiste à dessiner la leçon sous forme d'arbre avec le thème au centre et les idées reliées par des branches de couleurs différentes.</li>
-        <li><strong>Les flashcards :</strong> Sur un bout de papier, note la question au recto et la réponse qui la complète au verso, utile pour les définitions et le vocabulaire.</li>
-        <li><strong>Palais de la mémoire :</strong> Associe chaque information à une zone, une pièce de ta maison et balade-toi dedans de manière physique ou mentale.</li>
-        <li><strong>Enseigner à quelqu'un :</strong> Fais un mini-cours du sujet à ta famille ou tes amis, cela te force à structurer tes pensées.</li>
-        <li><strong>Teste tes connaissances :</strong> Fais des QCM, quiz, annales... se tester est plus efficace que relire.</li>
-        <li><strong>Relire avant de dormir :</strong> Relis ta leçon avant de t'endormir, le sommeil renforce la mémoire.</li>
-        <li><strong>S'enregistrer :</strong> Enregistre-toi avec ton téléphone pendant que tu récites ta leçon à voix haute puis réécoute l'enregistrement pour voir à quels endroits tu t'es trompé.</li>
-    </ol>
 
-    <a href="index.html" class="btn">Tester mes connaissances maintenant !</a>
-</section>
-    </main>
+  <div class="container">
+    <div class="header-section">
+      <h1>Comment apprendre et retenir une leçon rapidement ?</h1>
+      <p>Voici 10 méthodes de mémorisation efficaces pour booster tes révisions :</p>
+    </div>
+
+    <div class="methods-grid">
+      <div class="method-card">
+        <span class="method-number">01</span>
+        <div class="method-title">📅 Les Répétitions espacées</div>
+        <p>Apprends ta leçon à un moment de la journée, puis programme des rappels réguliers pour la relire plusieurs fois sur la durée.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">02</span>
+        <div class="method-title">📝 Rappel actif</div>
+        <p>Lis ton cours, ferme ton cahier et essaie de tout réécrire de mémoire sans regarder. Vérifie ensuite ce que tu as oublié.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">03</span>
+        <div class="method-title">💡 Technique de Feynman</div>
+        <p>Explique ta leçon simplement à voix haute comme si tu l'enseignais à un enfant pour repérer tes lacunes.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">04</span>
+        <div class="method-title">🌿 Carte mentale</div>
+        <p>Dessine la leçon sous forme d'arbre : le sujet principal au centre et les idées reliées par des branches colorées.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">05</span>
+        <div class="method-title">🃏 Les Flashcards</div>
+        <p>Inscrit la question au recto et la réponse au verso. Idéal pour retenir les définitions, le vocabulaire et les dates.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">06</span>
+        <div class="method-title">🏛️ Palais de la mémoire</div>
+        <p>Associe chaque information à un objet ou une pièce de ta maison et parcours ce lieu mentalement.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">07</span>
+        <div class="method-title">🗣️ Enseigner à quelqu'un</div>
+        <p>Fais un mini-cours à tes proches ou tes amis : expliquer les concepts t'oblige à structurer ta pensée.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">08</span>
+        <div class="method-title">🎯 Teste tes connaissances</div>
+        <p>Fais des QCM, des quiz ou des sujets d'annales. Se tester est beaucoup plus efficace que relire passivement.</p>
+
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">09</span>
+        <div class="method-title">🌙 Relire avant de dormir</div>
+        <p>Relis ta leçon juste avant de t'endormir : le sommeil aide le cerveau à consolider la mémoire à long terme.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="method-number">10</span>
+        <div class="method-title">🎙️ S'enregistrer</div>
+        <p>Récite ta leçon à voix haute en t'enregistrant sur ton téléphone, puis réécoute l'audio pour repérer tes erreurs.</p>
+      </div>
+    </div>
+
+    <div class="cta-container">
+      <a href="index.html" class="cta-button">👉 Tester mes connaissances maintenant !</a>
+    </div>
+  </div>
+
 </body>
 </html>
