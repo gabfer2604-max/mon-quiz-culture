@@ -792,9 +792,6 @@
       { id: "zw", names: ["zimbabwe"] }
     ];
 
-    // Ajuste dynamiquement le score max selon le nombre de pays dans le tableau
-    document.getElementById("score").textContent = `0 / ${countries.length}`;
-
     let foundCount = 0;
     let timeLeft = 900;
     let timerInterval = null;
@@ -805,6 +802,17 @@
     const scoreDisplay = document.getElementById("score");
     const startBtn = document.getElementById("startBtn");
 
+    // Compte dynamiquement uniquement les pays qui existent réellement dans le fichier SVG collé
+    function getValidCountries() {
+      return countries.filter(c => {
+        return document.getElementById(c.id) || 
+               document.getElementById(c.id.toUpperCase()) || 
+               document.getElementById(c.id.toLowerCase());
+      });
+    }
+
+    let activeCountries = [];
+
     function toggleGame() {
       if (!isPlaying) {
         startGame();
@@ -814,12 +822,13 @@
     }
 
     function startGame() {
+      activeCountries = getValidCountries();
       isPlaying = true;
       foundCount = 0;
       timeLeft = 900;
-      scoreDisplay.textContent = `0 / ${countries.length}`;
+      scoreDisplay.textContent = `0 / ${activeCountries.length}`;
       
-      countries.forEach(c => {
+      activeCountries.forEach(c => {
         const el = document.getElementById(c.id) || document.getElementById(c.id.toUpperCase()) || document.getElementById(c.id.toLowerCase());
         if (el) {
           el.style.fill = "";
@@ -857,7 +866,7 @@
       const saisieNettoyee = nettoyerTexte(e.target.value);
       if (!saisieNettoyee) return;
 
-      countries.forEach(country => {
+      activeCountries.forEach(country => {
         const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
         
         if (el && !el.classList.contains("found")) {
@@ -869,10 +878,10 @@
             el.classList.add("found");
 
             foundCount++;
-            scoreDisplay.textContent = `${foundCount} / ${countries.length}`;
+            scoreDisplay.textContent = `${foundCount} / ${activeCountries.length}`;
             input.value = "";
 
-            if (foundCount === countries.length) endGame(true);
+            if (foundCount === activeCountries.length) endGame(true);
           }
         }
       });
@@ -886,7 +895,7 @@
       startBtn.textContent = "Recommencer";
       startBtn.className = "btn btn-start";
 
-      countries.forEach(country => {
+      activeCountries.forEach(country => {
         const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
         if (el && !el.classList.contains("found")) {
           el.style.setProperty('fill', '#ef4444', 'important');
@@ -895,6 +904,12 @@
         }
       });
     }
+
+    // Initialisation du score max dès le chargement de la page
+    window.addEventListener('DOMContentLoaded', () => {
+      const total = getValidCountries().length;
+      scoreDisplay.textContent = `0 / ${total > 0 ? total : 200}`;
+    });
   </script>
 </body>
 </html>
