@@ -755,9 +755,9 @@
           const match = country.names.some(nom => nettoyerTexte(nom) === saisieNettoyee);
 
           if (match) {
-            el.style.fill = 'var(--green)';
-            el.querySelectorAll('path, polygon, rect').forEach(p => p.style.fill = 'var(--green)');
-            el.classList.add("found");
+  el.style.setProperty('fill', '#22c55e', 'important');
+  el.querySelectorAll('*').forEach(p => p.style.setProperty('fill', '#22c55e', 'important'));
+  el.classList.add("found");
 
             foundCount++;
             scoreDisplay.textContent = `${foundCount} / ${countries.length}`;
@@ -780,10 +780,10 @@
       countries.forEach(country => {
         const el = document.getElementById(country.id) || document.getElementById(country.id.toUpperCase()) || document.getElementById(country.id.toLowerCase());
         if (el && !el.classList.contains("found")) {
-          el.style.fill = 'var(--red)';
-          el.querySelectorAll('path, polygon, rect').forEach(p => p.style.fill = 'var(--red)');
-          el.classList.add("missed");
-        }
+  el.style.setProperty('fill', '#ef4444', 'important');
+  el.querySelectorAll('*').forEach(p => p.style.setProperty('fill', '#ef4444', 'important'));
+  el.classList.add("missed");
+}
       });
     }
   </script>
