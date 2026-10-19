@@ -147,6 +147,17 @@
     .missed {
       fill: var(--red) !important;
     }
+    .btn-retour {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
@@ -911,5 +922,6 @@
       scoreDisplay.textContent = `0 / ${total > 0 ? total : 200}`;
     });
   </script>
+  <a href="index.html" class="btn-retour">← Retour à l'accueil</a>
 </body>
 </html>
