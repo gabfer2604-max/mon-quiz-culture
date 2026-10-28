@@ -401,28 +401,6 @@
         </details>
     </div>
 
-
-    <!-- Bloc Paramètres tout en bas du menu hamburger -->
-<details class="menu-group" style="margin-top: 30px; border-top: 1px solid #eaeaea; padding-top: 15px;">
-  <summary class="menu-title" style="color: #ff9500; font-weight: bold;">⚙️ Paramètres</summary>
-  <ul class="submenu" style="list-style: none; padding-left: 15px; margin-top: 10px;">
-    
-    <!-- Option Profil / Connexion (Géré dynamiquement par Firebase) -->
-    <li id="menu-logged-out" style="margin-bottom: 8px;">
-      <a href="compte.html" style="color: #ff9500; text-decoration: none; font-weight: 600;">👤 Profil / Connexion</a>
-    </li>
-
-    <div id="menu-logged-in" style="display: none;">
-      <li style="margin-bottom: 8px; font-size: 0.95em; color: #333;">
-        Connecté en tant que <br><strong id="menu-user-pseudo" style="color: #ff9500;"></strong>
-      </li>
-      <li>
-        <button id="menu-btn-logout" style="width: 100%; padding: 8px; background-color: #e74c3c; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 5px;">
-          Déconnexion
-        </button>
-      </li>
-    </div>
-
   </ul>
 </details>
 
@@ -819,59 +797,5 @@
 
         window.addEventListener('DOMContentLoaded', chargerScoreMenu);
     </script>
-    <!-- Script Firebase pour gérer l'affichage dynamique du menu -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
-      authDomain: "culturefaits.firebaseapp.com",
-      projectId: "culturefaits",
-      storageBucket: "culturefaits.firebasestorage.app",
-      messagingSenderId: "192511796848",
-      appId: "1:192511796848:web:cccef0c7ae77e823d6b6b5",
-      measurementId: "G-PNWRYPXC4L"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const menuLoggedOut = document.getElementById('menu-logged-out');
-    const menuLoggedIn = document.getElementById('menu-logged-in');
-    const menuUserPseudo = document.getElementById('menu-user-pseudo');
-    const menuBtnLogout = document.getElementById('menu-btn-logout');
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        if (menuLoggedOut) menuLoggedOut.style.display = 'none';
-        if (menuLoggedIn) menuLoggedIn.style.display = 'block';
-
-        try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && menuUserPseudo) {
-            menuUserPseudo.textContent = userDoc.data().pseudo || user.email;
-          } else if (menuUserPseudo) {
-            menuUserPseudo.textContent = user.email;
-          }
-        } catch (e) {
-          if (menuUserPseudo) menuUserPseudo.textContent = user.email;
-        }
-      } else {
-        if (menuLoggedOut) menuLoggedOut.style.display = 'block';
-        if (menuLoggedIn) menuLoggedIn.style.display = 'none';
-      }
-    });
-
-    if (menuBtnLogout) {
-      menuBtnLogout.addEventListener('click', () => {
-        signOut(auth).then(() => {
-          window.location.reload();
-        });
-      });
-    }
-  </script>
 </body>
 </html>
