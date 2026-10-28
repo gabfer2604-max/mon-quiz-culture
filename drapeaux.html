@@ -22,7 +22,7 @@
             text-align: center;
             max-width: 500px;
             width: 100%;
-            background: transparent; /* Plus de fond gris */
+            background: transparent;
             padding: 30px;
             border-radius: 12px;
         }
@@ -46,7 +46,8 @@
             border-color: #ff9800;
         }
 
-        button {
+        /* Style commun pour tous les boutons principaux */
+        button, .btn-accueil {
             padding: 12px 25px;
             font-size: 16px;
             font-weight: bold;
@@ -57,13 +58,16 @@
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
             margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
-        button:active {
+        button:active, .btn-accueil:active {
             transform: scale(0.95);
         }
 
-        /* Bouton Suivant caché par défaut */
+        /* Bouton Suivant vert */
         #btn-suivant {
             background-color: #25D366;
             box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
@@ -82,11 +86,8 @@
             color: #555;
         }
 
-        .retour-accueil {
+        .retour-container {
             margin-top: 30px;
-            display: inline-block;
-            color: #888;
-            text-decoration: underline;
         }
     </style>
 </head>
@@ -113,8 +114,9 @@
             Score : <span id="score-actuel">0</span> points
         </div>
 
-        <br>
-        <a href="index.html" class="retour-accueil">⬅ Retour à l'accueil</a>
+        <div class="retour-container">
+            <a href="index.html" class="btn-accueil">⬅ Retour à l'accueil</a>
+        </div>
     </div>
 
     <script>
@@ -317,6 +319,15 @@
         let drapeauActuel = null;
         let score = 0;
 
+        // Fonction pour nettoyer le texte (enlève les accents, les majuscules, les tirets et les espaces)
+        function normaliserTexte(texte) {
+            return texte
+                .toLowerCase()
+                .normalize("NFD") // Sépare les lettres de leurs accents
+                .replace(/[\u0300-\u036f]/g, "") // Supprime les accents
+                .replace(/[^a-z0-9]/g, ""); // Supprime tout ce qui n'est pas une lettre ou un chiffre (tirets, espaces, apostrophes)
+        }
+
         function melangerTableau(tableau) {
             let tableauMelange = [...tableau];
             for (let i = tableauMelange.length - 1; i > 0; i--) {
@@ -336,7 +347,6 @@
             document.getElementById("reponse-utilisateur").value = "";
             document.getElementById("message-feedback").textContent = "";
 
-            // On réaffiche le bouton Valider et on cache le bouton Suivant
             document.getElementById("btn-valider").style.display = "inline-block";
             document.getElementById("btn-suivant").style.display = "none";
             document.getElementById("reponse-utilisateur").disabled = false;
@@ -344,13 +354,16 @@
         }
 
         function verifierReponse() {
-            const saisie = document.getElementById("reponse-utilisateur").value.trim().toLowerCase();
-            const bonneReponse = drapeauActuel.nom.trim().toLowerCase();
+            const saisieBrute = document.getElementById("reponse-utilisateur").value.trim();
             const feedback = document.getElementById("message-feedback");
 
-            if (saisie === "") return; // Empêche de valider vide
+            if (saisieBrute === "") return;
 
-            if (saisie === bonneReponse) {
+            // On compare les versions nettoyées (sans accents, sans tirets, sans majuscules)
+            const saisieNormalisee = normaliserTexte(saisieBrute);
+            const bonneReponseNormalisee = normaliserTexte(drapeauActuel.nom);
+
+            if (saisieNormalisee === bonneReponseNormalisee) {
                 score++;
                 document.getElementById("score-actuel").textContent = score;
                 feedback.style.color = "green";
@@ -360,21 +373,18 @@
                 feedback.textContent = `❌ Raté ! C'était : ${drapeauActuel.nom}`;
             }
 
-            // On masque le bouton Valider et on affiche le bouton Suivant
             document.getElementById("btn-valider").style.display = "none";
             document.getElementById("btn-suivant").style.display = "inline-block";
             document.getElementById("reponse-utilisateur").disabled = true;
             document.getElementById("btn-suivant").focus();
         }
 
-        // Permettre de valider avec la touche "Entrée"
         document.getElementById("reponse-utilisateur").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 verifierReponse();
             }
         });
 
-        // Lancer la première question
         chargerQuestion();
     </script>
 </body>
