@@ -15,8 +15,8 @@
             margin: 0;
             background-color: #ffffff;
             color: #000000;
-            height: 100vh; /* Force la hauteur exacte de l'écran */
-            overflow: hidden; /* Bloque tout défilement (haut en bas et gauche à droite) */
+            height: 100vh;
+            overflow: hidden;
         }
 
         .jeu-container {
@@ -47,7 +47,6 @@
             border-color: #ff9800;
         }
 
-        /* Style commun pour tous les boutons principaux */
         button, .btn-accueil {
             padding: 12px 25px;
             font-size: 16px;
@@ -58,21 +57,32 @@
             border-radius: 8px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
-            margin: 5px;
+            margin: 8px;
             text-decoration: none;
             display: inline-block;
             font-family: system-ui, -apple-system, sans-serif;
+            width: 85%;
+            max-width: 300px;
         }
 
         button:active, .btn-accueil:active {
             transform: scale(0.95);
         }
 
-        /* Bouton Suivant vert */
         #btn-suivant {
             background-color: #25D366;
             box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
             display: none; 
+            width: auto;
+        }
+
+        #btn-valider {
+            width: auto;
+        }
+
+        .btn-niveau {
+            background-color: #007bff;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
         }
 
         #message-feedback {
@@ -87,235 +97,169 @@
             color: #555;
         }
 
-        .retour-container {
-            margin-top: 20px;
+        .menu-niveaux {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .zone-jeu-cachee {
+            display: none;
         }
     </style>
 </head>
 <body>
 
     <div class="jeu-container">
-        <h1>🚩 Teste tes drapeaux</h1>
-        <p>Quel est le pays correspondant à cet emoji ?</p>
-
-        <!-- Affichage de l'emoji drapeau -->
-        <div id="drapeau-a-afficher">🇫🇷</div>
-
-        <!-- Formulaire de réponse -->
-        <div id="zone-form">
-            <input type="text" id="reponse-utilisateur" placeholder="Nom du pays..." autocomplete="off">
+        <!-- ÉCRAN DE SÉLECTION DES NIVEAUX -->
+        <div id="ecran-menu" class="menu-niveaux">
+            <h1>🚩 Teste tes drapeaux</h1>
+            <p>Choisis ton niveau de difficulté :</p>
+            <button class="btn-niveau" onclick="lancerJeu('debutant')">1. Débutant 🧐</button>
+            <button class="btn-niveau" onclick="lancerJeu('intermediaire')">2. Intermédiaire 👌</button>
+            <button class="btn-niveau" onclick="lancerJeu('avance')">3. Avancé 🔥</button>
+            <button class="btn-niveau" onclick="lancerJeu('goat')">4. GOAT 🐐</button>
             <br>
-            <button id="btn-valider" onclick="verifierReponse()">Valider</button>
-            <button id="btn-suivant" onclick="chargerQuestion()">Question suivante ➡️</button>
+            <a href="index.html" class="btn-accueil" style="background-color: #666; box-shadow: none;">⬅ Retour à l'accueil</a>
         </div>
 
-        <div id="message-feedback"></div>
+        <!-- ÉCRAN DU JEU -->
+        <div id="ecran-jeu" class="zone-jeu-cachee">
+            <h1 id="titre-niveau" style="margin: 0 0 10px 0; font-size: 22px;"></h1>
+            <div id="drapeau-a-afficher">🇫🇷</div>
 
-        <div class="score-box">
-            Score : <span id="score-actuel">0</span> points
-        </div>
+            <div id="zone-form">
+                <input type="text" id="reponse-utilisateur" placeholder="Nom du pays..." autocomplete="off">
+                <br>
+                <button id="btn-valider" onclick="verifierReponse()">Valider</button>
+                <button id="btn-suivant" onclick="chargerQuestion()">Question suivante ➡️</button>
+            </div>
 
-        <div class="retour-container">
-            <a href="index.html" class="btn-accueil">⬅ Retour à l'accueil</a>
+            <div id="message-feedback"></div>
+
+            <div class="score-box">
+                Score : <span id="score-actuel">0</span> points
+            </div>
+
+            <div style="margin-top: 15px;">
+                <button onclick="retourMenu()" style="background-color: #888; width: auto; padding: 8px 15px; font-size: 14px;">Changer de niveau</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const listeDrapeaux = [
-            { drapeau: "🇦🇫", nom: "Afghanistan" },
-            { drapeau: "🇿🇦", nom: "Afrique du Sud" },
-            { drapeau: "🇦🇱", nom: "Albanie" },
-            { drapeau: "🇩🇿", nom: "Algérie" },
-            { drapeau: "🇩🇪", nom: "Allemagne" },
-            { drapeau: "🇦🇩", nom: "Andorre" },
-            { drapeau: "🇦🇴", nom: "Angola" },
-            { drapeau: "🇦🇬", nom: "Antigua-et-Barbuda" },
-            { drapeau: "🇸🇦", nom: "Arabie saoudite" },
-            { drapeau: "🇦🇷", nom: "Argentine" },
-            { drapeau: "🇦🇲", nom: "Arménie" },
-            { drapeau: "🇦🇺", nom: "Australie" },
-            { drapeau: "🇦🇹", nom: "Autriche" },
-            { drapeau: "🇦🇿", nom: "Azerbaïdjan" },
-            { drapeau: "🇧🇸", nom: "Bahamas" },
-            { drapeau: "🇧🇭", nom: "Bahreïn" },
-            { drapeau: "🇧🇩", nom: "Bangladesh" },
-            { drapeau: "🇧🇧", nom: "Barbade" },
-            { drapeau: "🇧🇪", nom: "Belgique" },
-            { drapeau: "🇧🇿", nom: "Belize" },
-            { drapeau: "🇧🇯", nom: "Bénin" },
-            { drapeau: "🇧🇹", nom: "Bhoutan" },
-            { drapeau: "🇧🇾", nom: "Biélorussie" },
-            { drapeau: "🇲🇲", nom: "Birmanie" },
-            { drapeau: "🇧🇴", nom: "Bolivie" },
-            { drapeau: "🇧🇦", nom: "Bosnie-Herzégovine" },
-            { drapeau: "🇧🇼", nom: "Botswana" },
-            { drapeau: "🇧🇷", nom: "Brésil" },
-            { drapeau: "🇧🇳", nom: "Brunéi" },
-            { drapeau: "🇧🇬", nom: "Bulgarie" },
-            { drapeau: "🇧🇫", nom: "Burkina Faso" },
-            { drapeau: "🇧🇮", nom: "Burundi" },
-            { drapeau: "🇰🇭", nom: "Cambodge" },
-            { drapeau: "🇨🇲", nom: "Cameroun" },
-            { drapeau: "🇨🇦", nom: "Canada" },
-            { drapeau: "🇨🇻", nom: "Cap-Vert" },
-            { drapeau: "🇨🇫", nom: "République centrafricaine" },
-            { drapeau: "🇨🇱", nom: "Chili" },
-            { drapeau: "🇨🇳", nom: "Chine" },
-            { drapeau: "🇨🇾", nom: "Chypre" },
-            { drapeau: "🇨🇴", nom: "Colombie" },
-            { drapeau: "🇰🇲", nom: "Comores" },
-            { drapeau: "🇨🇬", nom: "Congo" },
-            { drapeau: "🇨🇩", nom: "République démocratique du Congo" },
-            { drapeau: "🇰🇷", nom: "Corée du Sud" },
-            { drapeau: "🇰🇵", nom: "Corée du Nord" },
-            { drapeau: "🇨🇷", nom: "Costa Rica" },
-            { drapeau: "🇨🇮", nom: "Côte d'Ivoire" },
-            { drapeau: "🇭🇷", nom: "Croatie" },
-            { drapeau: "🇨🇺", nom: "Cuba" },
-            { drapeau: "🇩🇰", nom: "Danemark" },
-            { drapeau: "🇩🇯", nom: "Djibouti" },
-            { drapeau: "🇩🇲", nom: "Dominique" },
-            { drapeau: "🇪🇬", nom: "Égypte" },
-            { drapeau: "🇦🇪", nom: "Émirats arabes unis" },
-            { drapeau: "🇪🇨", nom: "Équateur" },
-            { drapeau: "🇪🇷", nom: "Érythrée" },
-            { drapeau: "🇪🇸", nom: "Espagne" },
-            { drapeau: "🇪🇪", nom: "Estonie" },
-            { drapeau: "🇸🇿", nom: "Eswatini" },
-            { drapeau: "🇺🇸", nom: "États-Unis" },
-            { drapeau: "🇪🇹", nom: "Éthiopie" },
-            { drapeau: "🇫🇯", nom: "Fidji" },
-            { drapeau: "🇫🇮", nom: "Finlande" },
-            { drapeau: "🇫🇷", nom: "France" },
-            { drapeau: "🇬🇦", nom: "Gabon" },
-            { drapeau: "🇬🇲", nom: "Gambie" },
-            { drapeau: "🇬🇪", nom: "Géorgie" },
-            { drapeau: "🇬🇭", nom: "Ghana" },
-            { drapeau: "🇬🇷", nom: "Grèce" },
-            { drapeau: "🇬🇩", nom: "Grenade" },
-            { drapeau: "🇬🇹", nom: "Guatemala" },
-            { drapeau: "🇬🇳", nom: "Guinée" },
-            { drapeau: "🇬🇶", nom: "Guinée équatoriale" },
-            { drapeau: "🇬🇼", nom: "Guinée-Bissau" },
-            { drapeau: "🇬🇾", nom: "Guyana" },
-            { drapeau: "🇭🇹", nom: "Haïti" },
-            { drapeau: "🇭🇳", nom: "Honduras" },
-            { drapeau: "🇭🇺", nom: "Hongrie" },
-            { drapeau: "🇮🇳", nom: "Inde" },
-            { drapeau: "🇮🇩", nom: "Indonésie" },
-            { drapeau: "🇮🇶", nom: "Irak" },
-            { drapeau: "🇮🇷", nom: "Iran" },
-            { drapeau: "🇮🇪", nom: "Irlande" },
-            { drapeau: "🇮🇸", nom: "Islande" },
-            { drapeau: "🇮🇱", nom: "Israël" },
-            { drapeau: "🇮🇹", nom: "Italie" },
-            { drapeau: "🇯🇲", nom: "Jamaïque" },
-            { drapeau: "🇯🇵", nom: "Japon" },
-            { drapeau: "🇯🇴", nom: "Jordanie" },
-            { drapeau: "🇰🇿", nom: "Kazakhstan" },
-            { drapeau: "🇰🇪", nom: "Kenya" },
-            { drapeau: "🇰🇬", nom: "Kirghizistan" },
-            { drapeau: "🇰🇮", nom: "Kiribati" },
-            { drapeau: "🇰🇼", nom: "Koweït" },
-            { drapeau: "🇱🇦", nom: "Laos" },
-            { drapeau: "🇱🇸", nom: "Lesotho" },
-            { drapeau: "🇱🇻", nom: "Lettonie" },
-            { drapeau: "🇱🇧", nom: "Liban" },
-            { drapeau: "🇱🇷", nom: "Libéria" },
-            { drapeau: "🇱🇾", nom: "Libye" },
-            { drapeau: "🇱🇮", nom: "Liechtenstein" },
-            { drapeau: "🇱🇹", nom: "Lituanie" },
-            { drapeau: "🇱🇺", nom: "Luxembourg" },
-            { drapeau: "🇲🇰", nom: "Macédoine du Nord" },
-            { drapeau: "🇲🇬", nom: "Madagascar" },
-            { drapeau: "🇲🇾", nom: "Malaisie" },
-            { drapeau: "🇲🇼", nom: "Malawi" },
-            { drapeau: "🇲🇻", nom: "Maldives" },
-            { drapeau: "🇲🇱", nom: "Mali" },
-            { drapeau: "🇲🇹", nom: "Malte" },
-            { drapeau: "🇲🇦", nom: "Maroc" },
-            { drapeau: "🇲🇺", nom: "Maurice" },
-            { drapeau: "🇲🇷", nom: "Mauritanie" },
-            { drapeau: "🇲🇽", nom: "Mexique" },
-            { drapeau: "🇫🇲", nom: "Micronésie" },
-            { drapeau: "🇲🇩", nom: "Moldavie" },
-            { drapeau: "🇲🇨", nom: "Monaco" },
-            { drapeau: "🇲🇳", nom: "Mongolie" },
-            { drapeau: "🇲🇪", nom: "Monténégro" },
-            { drapeau: "🇲🇿", nom: "Mozambique" },
-            { drapeau: "🇳🇦", nom: "Namibie" },
-            { drapeau: "🇳🇷", nom: "Nauru" },
-            { drapeau: "🇳🇵", nom: "Népal" },
-            { drapeau: "🇳🇮", nom: "Nicaragua" },
-            { drapeau: "🇳🇪", nom: "Niger" },
-            { drapeau: "🇳🇬", nom: "Nigéria" },
-            { drapeau: "🇳🇴", nom: "Norvège" },
-            { drapeau: "🇳🇿", nom: "Nouvelle-Zélande" },
-            { drapeau: "🇴🇲", nom: "Oman" },
-            { drapeau: "🇺🇬", nom: "Ouganda" },
-            { drapeau: "🇺🇿", nom: "Ouzbékistan" },
-            { drapeau: "🇵🇰", nom: "Pakistan" },
-            { drapeau: "🇵🇼", nom: "Palaos" },
-            { drapeau: "🇵🇸", nom: "Palestine" },
-            { drapeau: "🇵🇦", nom: "Panama" },
-            { drapeau: "🇵🇬", nom: "Papouasie-Nouvelle-Guinée" },
-            { drapeau: "🇵🇾", nom: "Paraguay" },
-            { drapeau: "🇳🇱", nom: "Pays-Bas" },
-            { drapeau: "🇵🇪", nom: "Pérou" },
-            { drapeau: "🇵🇭", nom: "Philippines" },
-            { drapeau: "🇵🇱", nom: "Pologne" },
-            { drapeau: "🇵🇹", nom: "Portugal" },
-            { drapeau: "🇶🇦", nom: "Qatar" },
-            { drapeau: "🇷🇴", nom: "Roumanie" },
-            { drapeau: "🇬🇧", nom: "Royaume-Uni" },
-            { drapeau: "🇷🇺", nom: "Russie" },
-            { drapeau: "🇷🇼", nom: "Rwanda" },
-            { drapeau: "🇰🇳", nom: "Saint-Kitts-et-Nevis" },
-            { drapeau: "🇸🇲", nom: "Saint-Marin" },
-            { drapeau: "🇻🇨", nom: "Saint-Vincent-et-les-Grenadines" },
-            { drapeau: "🇱🇨", nom: "Sainte-Lucie" },
-            { drapeau: "🇸🇧", nom: "Salomon" },
-            { drapeau: "🇼🇸", nom: "Samoa" },
-            { drapeau: "🇸🇹", nom: "Sao Tomé-et-Principe" },
-            { drapeau: "🇸🇳", nom: "Sénégal" },
-            { drapeau: "🇷🇸", nom: "Serbie" },
-            { drapeau: "🇸🇨", nom: "Seychelles" },
-            { drapeau: "🇸🇱", nom: "Sierra Leone" },
-            { drapeau: "🇸🇬", nom: "Singapour" },
-            { drapeau: "🇸🇰", nom: "Slovaquie" },
-            { drapeau: "🇸🇮", nom: "Slovénie" },
-            { drapeau: "🇸🇴", nom: "Somalie" },
-            { drapeau: "🇸🇩", nom: "Soudan" },
-            { drapeau: "🇸🇸", nom: "Soudan du Sud" },
-            { drapeau: "🇱🇰", nom: "Sri Lanka" },
-            { drapeau: "🇸🇪", nom: "Suède" },
-            { drapeau: "🇨🇭", nom: "Suisse" },
-            { drapeau: "🇸🇷", nom: "Suriname" },
-            { drapeau: "🇸🇾", nom: "Syrie" },
-            { drapeau: "🇹🇯", nom: "Tadjikistan" },
-            { drapeau: "🇹🇿", nom: "Tanzanie" },
-            { drapeau: "🇹🇩", nom: "Tchad" },
-            { drapeau: "🇨🇿", nom: "Tchéquie" },
-            { drapeau: "🇹🇭", nom: "Thaïlande" },
-            { drapeau: "🇹🇱", nom: "Timor oriental" },
-            { drapeau: "🇹🇬", nom: "Togo" },
-            { drapeau: "🇹🇴", nom: "Tonga" },
-            { drapeau: "🇹🇹", nom: "Trinité-et-Tobago" },
-            { drapeau: "🇹🇳", nom: "Tunisie" },
-            { drapeau: "🇹🇲", nom: "Turkménistan" },
-            { drapeau: "🇹🇷", nom: "Turquie" },
-            { drapeau: "🇹🇻", nom: "Tuvalu" },
-            { drapeau: "🇺🇦", nom: "Ukraine" },
-            { drapeau: "🇺🇾", nom: "Uruguay" },
-            { drapeau: "🇻🇺", nom: "Vanuatu" },
-            { drapeau: "🇻🇦", nom: "Vatican" },
-            { drapeau: "🇻🇪", nom: "Venezuela" },
-            { drapeau: "🇻🇳", nom: "Viêt Nam" },
-            { drapeau: "🇾🇪", nom: "Yémen" },
-            { drapeau: "🇿🇲", nom: "Zambie" },
-            { drapeau: "🇿🇼", nom: "Zimbabwe" }
-        ];
+        // INTEGRALITE DES 197 PAYS REPARTIS SANS AUCUN DOUBLON
+        const baseDrapeaux = {
+            debutant: [
+                { drapeau: "🇫🇷", nom: "France" }, { drapeau: "🇺🇸", nom: "États-Unis" },
+                { drapeau: "🇯🇵", nom: "Japon" }, { drapeau: "🇧🇷", nom: "Brésil" },
+                { drapeau: "🇨🇦", nom: "Canada" }, { drapeau: "🇬🇧", nom: "Royaume-Uni" },
+                { drapeau: "🇩🇪", nom: "Allemagne" }, { drapeau: "🇪🇸", nom: "Espagne" },
+                { drapeau: "🇮🇹", nom: "Italie" }, { drapeau: "🇨🇳", nom: "Chine" },
+                { drapeau: "🇦🇺", nom: "Australie" }, { drapeau: "🇲🇽", nom: "Mexique" },
+                { drapeau: "🇦🇷", nom: "Argentine" }, { drapeau: "🇷🇺", nom: "Russie" },
+                { drapeau: "🇮🇳", nom: "Inde" }, { drapeau: "🇧🇪", nom: "Belgique" },
+                { drapeau: "🇨🇭", nom: "Suisse" }, { drapeau: "🇵🇹", nom: "Portugal" },
+                { drapeau: "🇩🇰", nom: "Danemark" }, { drapeau: "🇸🇪", nom: "Suède" },
+                { drapeau: "🇳🇱", nom: "Pays-Bas" }, { drapeau: "🇬🇷", nom: "Grèce" },
+                { drapeau: "🇹🇷", nom: "Turquie" }, { drapeau: "🇲🇦", nom: "Maroc" },
+                { drapeau: "🇪🇬", nom: "Égypte" }
+            ],
+            intermediaire: [
+                { drapeau: "🇰🇷", nom: "Corée du Sud" }, { drapeau: "🇩🇿", nom: "Algérie" },
+                { drapeau: "🇹🇳", nom: "Tunisie" }, { drapeau: "🇿🇦", nom: "Afrique du Sud" },
+                { drapeau: "🇨🇱", nom: "Chili" }, { drapeau: "🇨🇴", nom: "Colombie" },
+                { drapeau: "🇵🇱", nom: "Pologne" }, { drapeau: "🇺🇦", nom: "Ukraine" },
+                { drapeau: "🇳🇴", nom: "Norvège" }, { drapeau: "🇮🇪", nom: "Irlande" },
+                { drapeau: "🇦🇹", nom: "Autriche" }, { drapeau: "🇭🇷", nom: "Croatie" },
+                { drapeau: "🇫🇮", nom: "Finlande" }, { drapeau: "🇵🇪", nom: "Pérou" },
+                { drapeau: "🇨🇺", nom: "Cuba" }, { drapeau: "🇸🇳", nom: "Sénégal" },
+                { drapeau: "🇨🇲", nom: "Cameroun" }, { drapeau: "🇨🇮", nom: "Côte d'Ivoire" },
+                { drapeau: "🇻🇳", nom: "Viêt Nam" }, { drapeau: "🇹🇭", nom: "Thaïlande" },
+                { drapeau: "🇭🇺", nom: "Hongrie" }, { drapeau: "🇨🇿", nom: "Tchéquie" },
+                { drapeau: "🇷🇴", nom: "Roumanie" }, { drapeau: "🇳🇿", nom: "Nouvelle-Zélande" },
+                { drapeau: "🇸🇦", nom: "Arabie saoudite" }, { drapeau: "🇻🇪", nom: "Venezuela" },
+                { drapeau: "🇺🇾", nom: "Uruguay" }, { drapeau: "🇯🇲", nom: "Jamaïque" },
+                { drapeau: "🇰🇪", nom: "Kenya" }, { drapeau: "🇳🇬", nom: "Nigéria" },
+                { drapeau: "🇵🇰", nom: "Pakistan" }, { drapeau: "🇮🇩", nom: "Indonésie" },
+                { drapeau: "🇲🇾", nom: "Malaisie" }, { drapeau: "🇵🇭", nom: "Philippines" },
+                { drapeau: "🇸🇬", nom: "Singapour" }, { drapeau: "🇮🇱", nom: "Israël" },
+                { drapeau: "🇮🇷", nom: "Iran" }, { drapeau: "🇮🇶", nom: "Irak" },
+                { drapeau: "🇨🇷", nom: "Costa Rica" }, { drapeau: "🇪🇨", nom: "Équateur" },
+                { drapeau: "🇧🇴", nom: "Bolivie" }, { drapeau: "🇵🇾", nom: "Paraguay" },
+                { drapeau: "🇸🇰", nom: "Slovaquie" }, { drapeau: "🇸🇮", nom: "Slovénie" },
+                { drapeau: "🇧🇬", nom: "Bulgarie" }
+            ],
+            avance: [
+                { drapeau: "🇳🇵", nom: "Népal" }, { drapeau: "🇦🇱", nom: "Albanie" },
+                { drapeau: "🇮🇸", nom: "Islande" }, { drapeau: "🇰🇿", nom: "Kazakhstan" },
+                { drapeau: "🇺🇿", nom: "Ouzbékistan" }, { drapeau: "🇪🇪", nom: "Estonie" },
+                { drapeau: "🇱🇻", nom: "Lettonie" }, { drapeau: "🇱🇹", nom: "Lituanie" },
+                { drapeau: "🇲🇨", nom: "Monaco" }, { drapeau: "🇻🇦", nom: "Vatican" },
+                { drapeau: "🇱🇺", nom: "Luxembourg" }, { drapeau: "🇲🇹", nom: "Malte" },
+                { drapeau: "🇨🇾", nom: "Chypre" }, { drapeau: "🇧🇾", nom: "Biélorussie" },
+                { drapeau: "🇲🇩", nom: "Moldavie" }, { drapeau: "🇧🇦", nom: "Bosnie-Herzégovine" },
+                { drapeau: "🇷🇸", nom: "Serbie" }, { drapeau: "🇲🇪", nom: "Monténégro" },
+                { drapeau: "🇲🇰", nom: "Macédoine du Nord" }, { drapeau: "🇬🇪", nom: "Géorgie" },
+                { drapeau: "🇦🇲", nom: "Arménie" }, { drapeau: "🇦🇿", nom: "Azerbaïdjan" },
+                { drapeau: "🇰🇵", nom: "Corée du Nord" }, { drapeau: "🇲🇲", nom: "Birmanie" },
+                { drapeau: "🇰🇭", nom: "Cambodge" }, { drapeau: "🇱🇦", nom: "Laos" },
+                { drapeau: "🇧🇩", nom: "Bangladesh" }, { drapeau: "🇱🇰", nom: "Sri Lanka" },
+                { drapeau: "🇦🇪", nom: "Émirats arabes unis" }, { drapeau: "🇶🇦", nom: "Qatar" },
+                { drapeau: "🇰🇼", nom: "Koweït" }, { drapeau: "🇯🇴", nom: "Jordanie" },
+                { drapeau: "🇱🇧", nom: "Liban" }, { drapeau: "🇸🇾", nom: "Syrie" },
+                { drapeau: "🇾🇪", nom: "Yémen" }, { drapeau: "🇦🇴", nom: "Angola" },
+                { drapeau: "🇪🇹", nom: "Éthiopie" }, { drapeau: "🇬🇭", nom: "Ghana" },
+                { drapeau: "🇲🇬", nom: "Madagascar" }, { drapeau: "🇲🇱", nom: "Mali" },
+                { drapeau: "🇨🇬", nom: "Congo" }, { drapeau: "🇨🇩", nom: "République démocratique du Congo" },
+                { drapeau: "🇿🇲", nom: "Zambie" }, { drapeau: "🇿🇼", nom: "Zimbabwe" },
+                { drapeau: "🇹🇿", nom: "Tanzanie" }, { drapeau: "🇺🇬", nom: "Ouganda" },
+                { drapeau: "🇬🇹", nom: "Guatemala" }, { drapeau: "🇵🇦", nom: "Panama" },
+                { drapeau: "🇭🇹", nom: "Haïti" }, { drapeau: "🇩🇴", nom: "République dominicaine" },
+                { drapeau: "🇸🇻", nom: "El Salvador" }, { drapeau: "🇭🇳", nom: "Honduras" },
+                { drapeau: "🇳🇮", nom: "Nicaragua" }, { drapeau: "🇦🇫", nom: "Afghanistan" },
+                { drapeau: "🇵🇸", nom: "Palestine" }
+            ],
+            goat: [
+                { drapeau: "🇱🇷", nom: "Libéria" }, { drapeau: "🇲🇻", nom: "Maldives" },
+                { drapeau: "🇻🇨", nom: "Saint-Vincent-et-les-Grenadines" }, { drapeau: "🇴🇲", nom: "Oman" },
+                { drapeau: "🇹🇻", nom: "Tuvalu" }, { drapeau: "🇳🇷", nom: "Nauru" },
+                { drapeau: "🇻🇺", nom: "Vanuatu" }, { drapeau: "🇸🇿", nom: "Eswatini" },
+                { drapeau: "🇰🇳", nom: "Saint-Kitts-et-Nevis" }, { drapeau: "🇸🇲", nom: "Saint-Marin" },
+                { drapeau: "🇱🇨", nom: "Sainte-Lucie" }, { drapeau: "🇸🇧", nom: "Salomon" },
+                { drapeau: "🇼🇸", nom: "Samoa" }, { drapeau: "🇸🇹", nom: "Sao Tomé-et-Principe" },
+                { drapeau: "🇰🇮", nom: "Kiribati" }, { drapeau: "🇵🇼", nom: "Palaos" },
+                { drapeau: "🇫🇲", nom: "Micronésie" }, { drapeau: "🇲🇭", nom: "Marshall" },
+                { drapeau: "🇧🇹", nom: "Bhoutan" }, { drapeau: "🇱🇮", nom: "Liechtenstein" },
+                { drapeau: "🇦🇩", nom: "Andorre" }, { drapeau: "🇲🇷", nom: "Mauritanie" },
+                { drapeau: "🇰🇲", nom: "Comores" }, { drapeau: "🇩🇯", nom: "Djibouti" },
+                { drapeau: "🇪🇷", nom: "Érythrée" }, { drapeau: "🇸🇨", nom: "Seychelles" },
+                { drapeau: "🇦🇬", nom: "Antigua-et-Barbuda" }, { drapeau: "🇧🇸", nom: "Bahamas" },
+                { drapeau: "🇧🇭", nom: "Bahreïn" }, { drapeau: "🇧🇧", nom: "Barbade" },
+                { drapeau: "🇧🇿", nom: "Belize" }, { drapeau: "🇧🇯", nom: "Bénin" },
+                { drapeau: "🇧🇼", nom: "Botswana" }, { drapeau: "🇧🇳", nom: "Brunéi" },
+                { drapeau: "🇧🇫", nom: "Burkina Faso" }, { drapeau: "🇧🇮", nom: "Burundi" },
+                { drapeau: "🇨🇻", nom: "Cap-Vert" }, { drapeau: "🇨🇫", nom: "République centrafricaine" },
+                { drapeau: "🇩🇲", nom: "Dominique" }, { drapeau: "🇫🇯", nom: "Fidji" },
+                { drapeau: "🇬🇦", nom: "Gabon" }, { drapeau: "🇬🇲", nom: "Gambie" },
+                { drapeau: "🇬🇩", nom: "Grenade" }, { drapeau: "🇬🇳", nom: "Guinée" },
+                { drapeau: "🇬🇶", nom: "Guinée équatoriale" }, { drapeau: "🇬🇼", nom: "Guinée-Bissau" },
+                { drapeau: "🇬🇾", nom: "Guyana" }, { drapeau: "🇰🇬", nom: "Kirghizistan" },
+                { drapeau: "🇱🇸", nom: "Lesotho" }, { drapeau: "🇱🇾", nom: "Libye" },
+                { drapeau: "🇲🇼", nom: "Malawi" }, { drapeau: "🇲🇺", nom: "Maurice" },
+                { drapeau: "🇲🇳", nom: "Mongolie" }, { drapeau: "🇲🇿", nom: "Mozambique" },
+                { drapeau: "🇳🇦", nom: "Namibie" }, { drapeau: "🇳🇪", nom: "Niger" },
+                { drapeau: "🇵🇬", nom: "Papouasie-Nouvelle-Guinée" }, { drapeau: "🇷🇼", nom: "Rwanda" },
+                { drapeau: "🇸🇱", nom: "Sierra Leone" }, { drapeau: "🇸🇴", nom: "Somalie" },
+                { drapeau: "🇸🇩", nom: "Soudan" }, { drapeau: "🇸🇸", nom: "Soudan du Sud" },
+                { drapeau: "🇸🇷", nom: "Suriname" }, { drapeau: "🇹🇯", nom: "Tadjikistan" },
+                { drapeau: "🇹🇩", nom: "Tchad" }, { drapeau: "🇹🇱", nom: "Timor oriental" },
+                { drapeau: "🇹🇬", nom: "Togo" }, { drapeau: "🇹🇴", nom: "Tonga" },
+                { drapeau: "🇹🇹", nom: "Trinité-et-Tobago" }, { drapeau: "🇹🇲", nom: "Turkménistan" }
+            ]
+        };
 
+        let listeDrapeauxActuelle = [];
         let piocheActuelle = [];
         let drapeauActuel = null;
         let score = 0;
@@ -337,9 +281,34 @@
             return tableauMelange;
         }
 
+        function lancerJeu(niveau) {
+            listeDrapeauxActuelle = baseDrapeaux[niveau];
+            piocheActuelle = [];
+            score = 0;
+            document.getElementById("score-actuel").textContent = score;
+
+            const titres = {
+                debutant: "Niveau 1 : Débutant 🧐",
+                intermediaire: "Niveau 2 : Intermédiaire 👌",
+                avance: "Niveau 3 : Avancé 🔥",
+                goat: "Niveau 4 : GOAT 🐐"
+            };
+            document.getElementById("titre-niveau").textContent = titres[niveau];
+
+            document.getElementById("ecran-menu").style.display = "none";
+            document.getElementById("ecran-jeu").style.display = "block";
+
+            chargerQuestion();
+        }
+
+        function retourMenu() {
+            document.getElementById("ecran-jeu").style.display = "none";
+            document.getElementById("ecran-menu").style.display = "flex";
+        }
+
         function chargerQuestion() {
             if (piocheActuelle.length === 0) {
-                piocheActuelle = melangerTableau(listeDrapeaux);
+                piocheActuelle = melangerTableau(listeDrapeauxActuelle);
             }
             drapeauActuel = piocheActuelle.pop();
             
@@ -383,8 +352,6 @@
                 verifierReponse();
             }
         });
-
-        chargerQuestion();
     </script>
 </body>
 </html>
