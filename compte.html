@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Membre - CultureFaits</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 35px 30px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      max-width: 420px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #2c3e50;
+      font-size: 24px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #4a5568;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #3182ce;
+    }
+
+    /* Espacement et style des boutons */
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px; /* Espace net entre les boutons */
+      margin-top: 25px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button:active {
+      transform: scale(0.99);
+    }
+
+    .btn-primary {
+      background-color: #3182ce;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #2b6cb0;
+    }
+
+    .btn-secondary {
+      background-color: #38a169;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #2f855a;
+    }
+
+    .btn-danger {
+      background-color: #e53e3e;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c53030;
+    }
+
+    #message {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+    }
+
+    #message.error {
+      display: block;
+      background-color: #fed7d7;
+      color: #9b2c2c;
+    }
+
+    #message.success {
+      display: block;
+      background-color: #c6f6d5;
+      color: #22543d;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .nav-link {
+      margin-top: 25px;
+      display: inline-block;
+      color: #4a5568;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <!-- SECTION AUTHENTIFICATION (Connexion / Inscription) -->
+    <div id="auth-section">
+      <h2 id="form-title">Mon Compte</h2>
+      
+      <div class="input-group">
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" placeholder="votre@email.com" required>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="6 caractères minimum" required>
+      </div>
+
+      <!-- Groupe de boutons fonctionnels avec espace -->
+      <div class="button-group">
+        <button id="btn-login" class="btn-primary">Se connecter</button>
+        <button id="btn-signup" class="btn-secondary">S'inscrire</button>
+      </div>
+    </div>
+
+    <!-- SECTION PROFIL (Visible une fois connecté) -->
+    <div id="user-section" class="hidden">
+      <h2>Espace Membre</h2>
+      <p style="margin-bottom: 20px;">Ravi de vous revoir !<br><strong id="user-email" style="color: #3182ce;"></strong></p>
+      
+      <div class="button-group">
+        <button id="btn-logout" class="btn-danger">Se déconnecter</button>
+      </div>
+    </div>
+
+    <!-- Zone de message d'erreur ou succès -->
+    <div id="message"></div>
+
+    <a href="index.html" class="nav-link">← Retour au site principal</a>
+  </div>
+
+  <!-- SCRIPT FIREBASE COMPLET -->
+  <script type="module">
+    // Importations Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    // Configuration Firebase CultureFaits
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
+      authDomain: "culturefaits.firebaseapp.com",
+      projectId: "culturefaits",
+      storageBucket: "culturefaits.firebasestorage.app",
+      messagingSenderId: "192511796848",
+      appId: "1:192511796848:web:cccef0c7ae77e823d6b6b5",
+      measurementId: "G-PNWRYPXC4L"
+    };
+
+    // Initialisation
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+    // Éléments du DOM
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const btnSignup = document.getElementById('btn-signup');
+    const btnLogin = document.getElementById('btn-login');
+    const btnLogout = document.getElementById('btn-logout');
+    const authSection = document.getElementById('auth-section');
+    const userSection = document.getElementById('user-section');
+    const userEmailText = document.getElementById('user-email');
+    const messageDiv = document.getElementById('message');
+
+    // Fonction pour afficher des messages
+    function showMessage(text, isError = false) {
+      messageDiv.textContent = text;
+      messageDiv.className = isError ? 'error' : 'success';
+    }
+
+    function clearMessage() {
+      messageDiv.textContent = '';
+      messageDiv.className = '';
+    }
+
+    // --- Action : S'INSCRIRE ---
+    btnSignup.addEventListener('click', () => {
+      clearMessage();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showMessage('Veuillez remplir tous les champs.', true);
+        return;
+      }
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          showMessage('Compte créé avec succès !');
+        })
+        .catch((error) => {
+          let msg = "Erreur lors de l'inscription.";
+          if (error.code === 'auth/email-already-in-use') msg = "Cet e-mail est déjà utilisé.";
+          if (error.code === 'auth/weak-password') msg = "Le mot de passe doit faire au moins 6 caractères.";
+          if (error.code === 'auth/invalid-email') msg = "Adresse e-mail invalide.";
+          showMessage(msg, true);
+        });
+    });
+
+    // --- Action : SE CONNECTER ---
+    btnLogin.addEventListener('click', () => {
+      clearMessage();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showMessage('Veuillez remplir tous les champs.', true);
+        return;
+      }
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          showMessage('Connexion réussie !');
+        })
+        .catch(() => {
+          showMessage('E-mail ou mot de passe incorrect.', true);
+        });
+    });
+
+    // --- Action : SE DÉCONNECTER ---
+    btnLogout.addEventListener('click', () => {
+      clearMessage();
+      signOut(auth).then(() => {
+        showMessage('Vous êtes déconnecté.');
+      });
+    });
+
+    // --- Détection automatique de l'état de connexion ---
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        authSection.classList.add('hidden');
+        userSection.classList.remove('hidden');
+        userEmailText.textContent = user.email;
+      } else {
+        authSection.classList.remove('hidden');
+        userSection.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
