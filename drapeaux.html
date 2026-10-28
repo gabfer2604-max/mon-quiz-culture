@@ -22,10 +22,9 @@
             text-align: center;
             max-width: 500px;
             width: 100%;
-            background: #f9f9f9;
+            background: transparent; /* Plus de fond gris */
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         #drapeau-a-afficher {
@@ -57,10 +56,18 @@
             border-radius: 8px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
+            margin: 5px;
         }
 
         button:active {
             transform: scale(0.95);
+        }
+
+        /* Bouton Suivant caché par défaut */
+        #btn-suivant {
+            background-color: #25D366;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+            display: none; 
         }
 
         #message-feedback {
@@ -96,7 +103,8 @@
         <div id="zone-form">
             <input type="text" id="reponse-utilisateur" placeholder="Nom du pays..." autocomplete="off">
             <br>
-            <button onclick="verifierReponse()">Valider</button>
+            <button id="btn-valider" onclick="verifierReponse()">Valider</button>
+            <button id="btn-suivant" onclick="chargerQuestion()">Question suivante ➡️</button>
         </div>
 
         <div id="message-feedback"></div>
@@ -110,7 +118,6 @@
     </div>
 
     <script>
-        // 1. La liste complète de tous les drapeaux du monde
         const listeDrapeaux = [
             { drapeau: "🇦🇫", nom: "Afghanistan" },
             { drapeau: "🇿🇦", nom: "Afrique du Sud" },
@@ -297,7 +304,7 @@
             { drapeau: "🇹🇻", nom: "Tuvalu" },
             { drapeau: "🇺🇦", nom: "Ukraine" },
             { drapeau: "🇺🇾", nom: "Uruguay" },
-            { dirname: "🇻🇺", nom: "Vanuatu" },
+            { drapeau: "🇻🇺", nom: "Vanuatu" },
             { drapeau: "🇻🇦", nom: "Vatican" },
             { drapeau: "🇻🇪", nom: "Venezuela" },
             { drapeau: "🇻🇳", nom: "Viêt Nam" },
@@ -310,7 +317,6 @@
         let drapeauActuel = null;
         let score = 0;
 
-        // Fonction pour mélanger (Fisher-Yates)
         function melangerTableau(tableau) {
             let tableauMelange = [...tableau];
             for (let i = tableauMelange.length - 1; i > 0; i--) {
@@ -320,36 +326,45 @@
             return tableauMelange;
         }
 
-        // Charger une nouvelle question
         function chargerQuestion() {
             if (piocheActuelle.length === 0) {
                 piocheActuelle = melangerTableau(listeDrapeaux);
             }
             drapeauActuel = piocheActuelle.pop();
             
-            // Afficher l'emoji
             document.getElementById("drapeau-a-afficher").textContent = drapeauActuel.drapeau;
             document.getElementById("reponse-utilisateur").value = "";
             document.getElementById("message-feedback").textContent = "";
+
+            // On réaffiche le bouton Valider et on cache le bouton Suivant
+            document.getElementById("btn-valider").style.display = "inline-block";
+            document.getElementById("btn-suivant").style.display = "none";
+            document.getElementById("reponse-utilisateur").disabled = false;
+            document.getElementById("reponse-utilisateur").focus();
         }
 
-        // Vérifier la réponse du joueur
         function verifierReponse() {
             const saisie = document.getElementById("reponse-utilisateur").value.trim().toLowerCase();
             const bonneReponse = drapeauActuel.nom.trim().toLowerCase();
             const feedback = document.getElementById("message-feedback");
+
+            if (saisie === "") return; // Empêche de valider vide
 
             if (saisie === bonneReponse) {
                 score++;
                 document.getElementById("score-actuel").textContent = score;
                 feedback.style.color = "green";
                 feedback.textContent = "✅ Correct ! Bien joué.";
-                setTimeout(chargerQuestion, 1500); // Passe au suivant après 1.5s
             } else {
                 feedback.style.color = "red";
                 feedback.textContent = `❌ Raté ! C'était : ${drapeauActuel.nom}`;
-                setTimeout(chargerQuestion, 2000);
             }
+
+            // On masque le bouton Valider et on affiche le bouton Suivant
+            document.getElementById("btn-valider").style.display = "none";
+            document.getElementById("btn-suivant").style.display = "inline-block";
+            document.getElementById("reponse-utilisateur").disabled = true;
+            document.getElementById("btn-suivant").focus();
         }
 
         // Permettre de valider avec la touche "Entrée"
@@ -359,7 +374,7 @@
             }
         });
 
-        // Lancer la première question au chargement de la page
+        // Lancer la première question
         chargerQuestion();
     </script>
 </body>
