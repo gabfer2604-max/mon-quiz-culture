@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon Compte - CultureFaits</title>
+  <title>Connexion / Inscription - CultureFaits</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -107,31 +107,11 @@
       transform: scale(0.99);
     }
 
-    /* Bouton Se connecter en Orange (identique au rond de la page d'accueil) */
-    .btn-primary { 
-      background-color: #ff9500; 
-      color: #ffffff; 
-    }
-    .btn-primary:hover { 
-      opacity: 0.9; 
-    }
+    .btn-primary { background-color: #ff9500; color: #ffffff; }
+    .btn-primary:hover { opacity: 0.9; }
 
-    /* Bouton S'inscrire en Vert (identique au bouton partager) */
-    .btn-secondary { 
-      background-color: #2ecc71; 
-      color: #ffffff; 
-    }
-    .btn-secondary:hover { 
-      opacity: 0.9; 
-    }
-
-    .btn-danger { 
-      background-color: #e74c3c; 
-      color: #ffffff; 
-    }
-    .btn-danger:hover { 
-      opacity: 0.9; 
-    }
+    .btn-secondary { background-color: #2ecc71; color: #ffffff; }
+    .btn-secondary:hover { opacity: 0.9; }
 
     #message {
       margin-top: 20px;
@@ -144,8 +124,6 @@
 
     #message.error { display: block; background-color: #fde8e8; color: #c53030; }
     #message.success { display: block; background-color: #def7ec; color: #03543f; }
-
-    .hidden { display: none !important; }
 
     .nav-link {
       margin-top: 25px;
@@ -163,7 +141,7 @@
 
   <div class="card">
     <div id="auth-section">
-      <h2 id="form-title">Mon Compte</h2>
+      <h2>Mon Compte</h2>
       
       <div class="input-group">
         <label for="pseudo">Pseudo (pour le classement)</label>
@@ -189,16 +167,6 @@
       </div>
     </div>
 
-    <div id="user-section" class="hidden">
-      <h2>Espace Membre</h2>
-      <p style="margin-bottom: 10px;">Joueur : <strong id="user-pseudo" style="color: #ff9500;"></strong></p>
-      <p style="margin-bottom: 20px; font-size: 14px; color: #666666;">Score total : <span id="user-score" style="font-weight: bold; color: #2ecc71;">0</span> pts</p>
-      
-      <div class="button-group">
-        <button id="btn-logout" class="btn-danger">Se déconnecter</button>
-      </div>
-    </div>
-
     <div id="message"></div>
 
     <a href="index.html" class="nav-link">← Retour au site principal</a>
@@ -206,19 +174,16 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
     import { 
       getAuth, 
       createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword, 
-      signOut, 
+      signInWithEmailAndPassword,
       onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
     import { 
       getFirestore, 
       doc, 
-      setDoc, 
-      getDoc 
+      setDoc 
     } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -232,7 +197,6 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
@@ -242,11 +206,6 @@
     const togglePwdBtn = document.getElementById('toggle-pwd-btn');
     const btnSignup = document.getElementById('btn-signup');
     const btnLogin = document.getElementById('btn-login');
-    const btnLogout = document.getElementById('btn-logout');
-    const authSection = document.getElementById('auth-section');
-    const userSection = document.getElementById('user-section');
-    const userPseudoText = document.getElementById('user-pseudo');
-    const userScoreText = document.getElementById('user-score');
     const messageDiv = document.getElementById('message');
 
     togglePwdBtn.addEventListener('click', () => {
@@ -264,13 +223,7 @@
       messageDiv.className = isError ? 'error' : 'success';
     }
 
-    function clearMessage() {
-      messageDiv.textContent = '';
-      messageDiv.className = '';
-    }
-
     btnSignup.addEventListener('click', async () => {
-      clearMessage();
       const email = emailInput.value.trim();
       const password = passwordInput.value;
       const pseudo = pseudoInput.value.trim() || "Joueur";
@@ -282,26 +235,23 @@
 
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        await setDoc(doc(db, "users", user.uid), {
+        await setDoc(doc(db, "users", userCredential.user.uid), {
           pseudo: pseudo,
           email: email,
           scoreQuiz: 0,
           createdAt: new Date()
         });
-
-        showMessage('Compte et profil créés avec succès !');
+        showMessage('Compte créé ! Redirection...');
+        setTimeout(() => window.location.href = 'index.html', 1500);
       } catch (error) {
         let msg = "Erreur lors de l'inscription.";
         if (error.code === 'auth/email-already-in-use') msg = "Cet e-mail est déjà utilisé.";
-        if (error.code === 'auth/weak-password') msg = "Le mot de passe doit faire au moins 6 caractères.";
+        if (error.code === 'auth/weak-password') msg = "Mot de passe de 6 caractères min.";
         showMessage(msg, true);
       }
     });
 
     btnLogin.addEventListener('click', () => {
-      clearMessage();
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
@@ -311,33 +261,5 @@
       }
 
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => showMessage('Connexion réussie !'))
-        .catch(() => showMessage('E-mail ou mot de passe incorrect.', true));
-    });
-
-    btnLogout.addEventListener('click', () => {
-      clearMessage();
-      signOut(auth);
-    });
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        authSection.classList.add('hidden');
-        userSection.classList.remove('hidden');
-
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          userPseudoText.textContent = data.pseudo || user.email;
-          userScoreText.textContent = data.scoreQuiz || 0;
-        } else {
-          userPseudoText.textContent = user.email;
-        }
-      } else {
-        authSection.classList.remove('hidden');
-        userSection.classList.add('hidden');
-      }
-    });
-  </script>
-</body>
-</html>
+        .then(() => {
+          showMessage('Connexion réussie !
