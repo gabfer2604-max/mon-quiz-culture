@@ -401,6 +401,30 @@
         </details>
     </div>
 
+
+    <!-- Section Paramètres / Compte en bas du menu -->
+<details open class="menu-group" style="margin-top: 20px; border-top: 1px solid #eaeaea; padding-top: 15px;">
+  <summary class="menu-title">⚙️ Paramètres</summary>
+  <ul class="submenu">
+    <!-- Affiché si déconnecté -->
+    <li id="menu-logged-out">
+      <a href="compte.html" style="color: #ff9500; font-weight: bold;">👤 Se connecter / S'inscrire</a>
+    </li>
+    
+    <!-- Affiché si connecté -->
+    <div id="menu-logged-in" style="display: none;">
+      <li style="padding: 5px 0; font-size: 0.95em; color: #333;">
+        Connecté en tant que <strong id="menu-user-pseudo" style="color: #ff9500;"></strong>
+      </li>
+      <li style="margin-top: 8px;">
+        <button id="menu-btn-logout" style="width: 100%; padding: 8px; background-color: #e74c3c; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
+          Déconnexion
+        </button>
+      </li>
+    </div>
+  </ul>
+</details>
+
     <!-- Contenu principal -->
     <h1 id="titre">CultureFaits</h1>
 
