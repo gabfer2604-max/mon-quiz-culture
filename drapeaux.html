@@ -15,7 +15,8 @@
             margin: 0;
             background-color: #ffffff;
             color: #000000;
-            min-height: 100vh;
+            height: 100vh; /* Force la hauteur exacte de l'écran */
+            overflow: hidden; /* Bloque tout défilement (haut en bas et gauche à droite) */
         }
 
         .jeu-container {
@@ -23,13 +24,13 @@
             max-width: 500px;
             width: 100%;
             background: transparent;
-            padding: 30px;
+            padding: 20px;
             border-radius: 12px;
         }
 
         #drapeau-a-afficher {
             font-size: 100px;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         input[type="text"] {
@@ -81,13 +82,13 @@
         }
 
         .score-box {
-            margin-top: 20px;
+            margin-top: 15px;
             font-size: 16px;
             color: #555;
         }
 
         .retour-container {
-            margin-top: 30px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -319,13 +320,12 @@
         let drapeauActuel = null;
         let score = 0;
 
-        // Fonction pour nettoyer le texte (enlève les accents, les majuscules, les tirets et les espaces)
         function normaliserTexte(texte) {
             return texte
                 .toLowerCase()
-                .normalize("NFD") // Sépare les lettres de leurs accents
-                .replace(/[\u0300-\u036f]/g, "") // Supprime les accents
-                .replace(/[^a-z0-9]/g, ""); // Supprime tout ce qui n'est pas une lettre ou un chiffre (tirets, espaces, apostrophes)
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "");
         }
 
         function melangerTableau(tableau) {
@@ -359,7 +359,6 @@
 
             if (saisieBrute === "") return;
 
-            // On compare les versions nettoyées (sans accents, sans tirets, sans majuscules)
             const saisieNormalisee = normaliserTexte(saisieBrute);
             const bonneReponseNormalisee = normaliserTexte(drapeauActuel.nom);
 
