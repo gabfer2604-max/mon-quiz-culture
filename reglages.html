@@ -143,70 +143,72 @@
     <a href="index.html" class="nav-link">← Retour à l'accueil</a>
   </div>
 
-  <!-- Script Firebase pour récupérer le pseudo et gérer la déconnexion -->
- <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-  import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+  <!-- Script Firebase avec version stable 10.8.0 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
-    authDomain: "culturefaits.firebaseapp.com",
-    projectId: "culturefaits",
-    storageBucket: "culturefaits.firebasestorage.app",
-    messagingSenderId: "192511796848",
-    appId: "1:192511796848:web:cccef0c7ae77e823d6b6b5",
-    measurementId: "G-PNWRYPXC4L"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
+      authDomain: "culturefaits.firebaseapp.com",
+      projectId: "culturefaits",
+      storageBucket: "culturefaits.firebasestorage.app",
+      messagingSenderId: "192511796848",
+      appId: "1:192511796848:web:cccef0c7ae77e823d6b6b5",
+      measurementId: "G-PNWRYPXC4L"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  const userPseudoEl = document.getElementById('user-pseudo');
-  const userAvatarEl = document.getElementById('user-avatar');
-  const btnLogout = document.getElementById('btn-logout');
+    const userPseudoEl = document.getElementById('user-pseudo');
+    const userEmailEl = document.getElementById('user-email');
+    const userAvatarEl = document.getElementById('user-avatar');
+    const btnLogout = document.getElementById('btn-logout');
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-        // 1. Chercher la fiche de l'utilisateur dans la base Firestore (collection "users")
-        const userDoc = await getDoc(doc(db, "users", user.uid));
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Affichage de secours immédiat (évite de rester bloqué sur "Chargement...")
+        let pseudo = user.email ? user.email.split('@')[0] : "Joueur";
         
-        let pseudo = "";
+        if (userEmailEl) userEmailEl.textContent = user.email || "";
 
-        if (userDoc.exists() && userDoc.data().pseudo) {
-          pseudo = userDoc.data().pseudo;
-        } else if (user.displayName) {
-          pseudo = user.displayName;
-        } else {
-          pseudo = "Joueur"; // Nom par défaut si aucun pseudo n'est trouvé
+        try {
+          // Chercher le vrai pseudo dans Firestore
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists() && userDoc.data().pseudo) {
+            pseudo = userDoc.data().pseudo;
+          } else if (user.displayName) {
+            pseudo = user.displayName;
+          }
+        } catch (e) {
+          console.error("Erreur Firestore (utilisation du pseudo par défaut) :", e);
         }
 
-        // 2. Affichage du pseudo exact
+        // Affichage final du pseudo
         if (userPseudoEl) userPseudoEl.textContent = pseudo;
         
-        // 3. Première lettre du pseudo dans l'avatar
+        // Première lettre dans l'avatar
         if (userAvatarEl && pseudo) {
           userAvatarEl.textContent = pseudo.charAt(0).toUpperCase();
         }
 
-      } catch (e) {
-        console.error("Erreur lors de la récupération du pseudo :", e);
-        if (userPseudoEl) userPseudoEl.textContent = "Joueur";
+      } else {
+        window.location.href = 'compte.html';
       }
-    } else {
-      // Redirige vers la page de connexion si non connecté
-      window.location.href = 'compte.html';
-    }
-  });
-
-  // Gestion de la déconnexion
-  if (btnLogout) {
-    btnLogout.addEventListener('click', () => {
-      signOut(auth).then(() => {
-        window.location.href = 'index.html';
-      });
     });
-  }
-</script>
+
+    // Gestion de la déconnexion
+    if (btnLogout) {
+      btnLogout.addEventListener('click', () => {
+        signOut(auth).then(() => {
+          window.location.href = 'index.html';
+        });
+      });
+    }
+  </script>
+</body>
+</html>
