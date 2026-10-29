@@ -256,6 +256,92 @@
       });
     }
 
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword 
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc 
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
+      authDomain: "culturefaits.firebaseapp.com",
+      projectId: "culturefaits",
+      storageBucket: "culturefaits.firebasestorage.app",
+      messagingSenderId: "192511796848",
+      appId: "1:192511796848:web:cccef0c7ae77e823d6b6b5",
+      measurementId: "G-PNWRYPXC4L"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const pseudoInput = document.getElementById('pseudo');
+    const togglePwdBtn = document.getElementById('toggle-pwd-btn');
+    const btnSignup = document.getElementById('btn-signup');
+    const btnLogin = document.getElementById('btn-login');
+    const messageDiv = document.getElementById('message');
+
+    // Gestion de l'affichage du mot de passe
+    if (togglePwdBtn && passwordInput) {
+      togglePwdBtn.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          togglePwdBtn.textContent = '🙈';
+        } else {
+          passwordInput.type = 'password';
+          togglePwdBtn.textContent = '👁️';
+        }
+      });
+    }
+
+    function showMessage(text, isError = false) {
+      if (!messageDiv) return;
+      messageDiv.textContent = text;
+      messageDiv.className = isError ? 'error' : 'success';
+    }
+
+    // Inscription
+    if (btnSignup) {
+      btnSignup.addEventListener('click', async () => {
+        const email = emailInput ? emailInput.value.trim() : '';
+        const password = passwordInput ? passwordInput.value : '';
+        const pseudo = pseudoInput ? pseudoInput.value.trim() || "Joueur" : "Joueur";
+
+        if (!email || !password) {
+          showMessage('Veuillez remplir l\'e-mail et le mot de passe.', true);
+          return;
+        }
+
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          await setDoc(doc(db, "users", userCredential.user.uid), {
+            pseudo: pseudo,
+            email: email,
+            scoreQuiz: 0,
+            createdAt: new Date()
+          });
+          showMessage('Compte créé ! Redirection...');
+          setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+        } catch (error) {
+          let msg = "Erreur lors de l'inscription.";
+          if (error.code === 'auth/email-already-in-use') msg = "Cet e-mail est déjà utilisé.";
+          if (error.code === 'auth/weak-password') msg = "Mot de passe de 6 caractères min.";
+          showMessage(msg, true);
+        }
+      });
+    }
+
+    // Connexion
     if (btnLogin) {
       btnLogin.addEventListener('click', async () => {
         const email = emailInput ? emailInput.value.trim() : '';
@@ -268,23 +354,21 @@
         }
 
         try {
-          // 1. Connexion Firebase Auth
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
 
-          // 2. S'assurer que le document Firestore existe (et mettre à jour le pseudo si renseigné)
           const userDocRef = doc(db, "users", user.uid);
-          
           await setDoc(userDocRef, {
             email: email,
-            ...(pseudo && { pseudo: pseudo }) // Met à jour le pseudo s'il a été écrit dans l'input
-          }, { merge: true }); // { merge: true } évite d'écraser les anciennes données (comme le score)
+            ...(pseudo && { pseudo: pseudo })
+          }, { merge: true });
 
           showMessage('Connexion réussie ! Redirection...');
-          setTimeout(() => window.location.href = 'index.html', 1200);
+          setTimeout(() => { window.location.href = 'index.html'; }, 1200);
 
         } catch (error) {
           showMessage('E-mail ou mot de passe incorrect.', true);
         }
       });
     }
+  </script>
