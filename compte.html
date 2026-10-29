@@ -169,7 +169,7 @@
 
     <div id="message"></div>
 
-    <a href="index.html" class="nav-link">← Retour à l'acceuil</a>
+    <a href="index.html" class="nav-link">← Retour à l'accueil</a>
   </div>
 
   <script type="module">
@@ -208,58 +208,72 @@
     const btnLogin = document.getElementById('btn-login');
     const messageDiv = document.getElementById('message');
 
-    togglePwdBtn.addEventListener('click', () => {
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        togglePwdBtn.textContent = '🙈';
-      } else {
-        passwordInput.type = 'password';
-        togglePwdBtn.textContent = '👁️';
-      }
-    });
+    if (togglePwdBtn && passwordInput) {
+      togglePwdBtn.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          togglePwdBtn.textContent = '🙈';
+        } else {
+          passwordInput.type = 'password';
+          togglePwdBtn.textContent = '👁️';
+        }
+      });
+    }
 
     function showMessage(text, isError = false) {
+      if (!messageDiv) return;
       messageDiv.textContent = text;
       messageDiv.className = isError ? 'error' : 'success';
     }
 
-    btnSignup.addEventListener('click', async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
-      const pseudo = pseudoInput.value.trim() || "Joueur";
+    if (btnSignup) {
+      btnSignup.addEventListener('click', async () => {
+        const email = emailInput ? emailInput.value.trim() : '';
+        const password = passwordInput ? passwordInput.value : '';
+        const pseudo = pseudoInput ? pseudoInput.value.trim() || "Joueur" : "Joueur";
 
-      if (!email || !password) {
-        showMessage('Veuillez remplir l\'e-mail et le mot de passe.', true);
-        return;
-      }
+        if (!email || !password) {
+          showMessage('Veuillez remplir l\'e-mail et le mot de passe.', true);
+          return;
+        }
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "users", userCredential.user.uid), {
-          pseudo: pseudo,
-          email: email,
-          scoreQuiz: 0,
-          createdAt: new Date()
-        });
-        showMessage('Compte créé ! Redirection...');
-        setTimeout(() => window.location.href = 'index.html', 1500);
-      } catch (error) {
-        let msg = "Erreur lors de l'inscription.";
-        if (error.code === 'auth/email-already-in-use') msg = "Cet e-mail est déjà utilisé.";
-        if (error.code === 'auth/weak-password') msg = "Mot de passe de 6 caractères min.";
-        showMessage(msg, true);
-      }
-    });
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          await setDoc(doc(db, "users", userCredential.user.uid), {
+            pseudo: pseudo,
+            email: email,
+            scoreQuiz: 0,
+            createdAt: new Date()
+          });
+          showMessage('Compte créé ! Redirection...');
+          setTimeout(() => window.location.href = 'index.html', 1500);
+        } catch (error) {
+          let msg = "Erreur lors de l'inscription.";
+          if (error.code === 'auth/email-already-in-use') msg = "Cet e-mail est déjà utilisé.";
+          if (error.code === 'auth/weak-password') msg = "Mot de passe de 6 caractères min.";
+          showMessage(msg, true);
+        }
+      });
+    }
 
-    btnLogin.addEventListener('click', () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
+    if (btnLogin) {
+      btnLogin.addEventListener('click', () => {
+        const email = emailInput ? emailInput.value.trim() : '';
+        const password = passwordInput ? passwordInput.value : '';
 
-      if (!email || !password) {
-        showMessage('Veuillez remplir tous les champs.', true);
-        return;
-      }
+        if (!email || !password) {
+          showMessage('Veuillez remplir tous les champs.', true);
+          return;
+        }
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          showMessage('Connexion réussie !
+        signInWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            showMessage('Connexion réussie ! Redirection...');
+            setTimeout(() => window.location.href = 'index.html', 1200);
+          })
+          .catch(() => showMessage('E-mail ou mot de passe incorrect.', true));
+      });
+    }
+  </script>
+</body>
+</html>
