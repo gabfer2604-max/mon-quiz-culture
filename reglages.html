@@ -10,46 +10,83 @@
       background-color: #ffffff;
       color: #000000;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
     .card {
       background: #ffffff;
       padding: 35px 30px;
-      border-radius: 14px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       border: 1px solid #eaeaea;
       max-width: 400px;
-      width: 90%;
+      width: 100%;
       box-sizing: border-box;
       text-align: center;
     }
 
     h2 {
       margin-top: 0;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       color: #000000;
       font-size: 26px;
       font-weight: 700;
     }
 
-    .info-box {
+    /* Styles de la Carte de Profil */
+    .profile-card {
+      background-color: #f9f9f9;
+      border: 1px solid #eeeeee;
+      border-radius: 12px;
+      padding: 20px;
       margin-bottom: 25px;
-      font-size: 16px;
-      color: #333333;
-      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
-    .info-box strong {
+    .avatar {
+      width: 65px;
+      height: 65px;
+      background-color: #ff9500;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
+    }
+
+    .status-text {
+      font-size: 14px;
+      color: #666666;
+      margin: 0;
+    }
+
+    .user-name {
+      font-size: 20px;
+      font-weight: 700;
       color: #ff9500;
-      font-size: 18px;
+      margin: 0;
+      word-break: break-word;
     }
 
+    .user-email {
+      font-size: 13px;
+      color: #888888;
+      margin: 0;
+    }
+
+    /* Boutons et navigation */
     .btn-danger {
       width: 100%;
       padding: 12px;
@@ -60,11 +97,15 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.1s;
     }
 
     .btn-danger:hover {
       opacity: 0.9;
+    }
+
+    .btn-danger:active {
+      transform: scale(0.99);
     }
 
     .nav-link {
@@ -87,10 +128,12 @@
   <div class="card">
     <h2>Paramètres</h2>
     
-    <!-- 1. Connecté en tant que : Nom d'utilisateur -->
-    <div class="info-box">
-      Connecté en tant que :<br>
-      <strong id="user-pseudo">Chargement...</strong>
+    <!-- Carte de Profil -->
+    <div class="profile-card">
+      <div class="avatar" id="user-avatar">👤</div>
+      <p class="status-text">Connecté en tant que :</p>
+      <h3 class="user-name" id="user-pseudo">Chargement...</h3>
+      <p class="user-email" id="user-email"></p>
     </div>
 
     <!-- Bouton de déconnexion -->
@@ -121,28 +164,41 @@
     const db = getFirestore(app);
 
     const userPseudoEl = document.getElementById('user-pseudo');
+    const userEmailEl = document.getElementById('user-email');
+    const userAvatarEl = document.getElementById('user-avatar');
     const btnLogout = document.getElementById('btn-logout');
 
-    // Vérifier l'état de connexion et récupérer le pseudo depuis Firestore
+    // Récupération dynamique des données utilisateur
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        if (userEmailEl) userEmailEl.textContent = user.email;
+
         try {
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists()) {
-            userPseudoEl.textContent = userDoc.data().pseudo || user.email;
+          let pseudo = "Joueur";
+          
+          if (userDoc.exists() && userDoc.data().pseudo) {
+            pseudo = userDoc.data().pseudo;
           } else {
-            userPseudoEl.textContent = user.email;
+            pseudo = user.email.split('@')[0]; // Utilise le début de l'email si pas de pseudo
+          }
+
+          if (userPseudoEl) userPseudoEl.textContent = pseudo;
+          
+          // Met la première lettre du pseudo dans l'avatar
+          if (userAvatarEl && pseudo) {
+            userAvatarEl.textContent = pseudo.charAt(0).toUpperCase();
           }
         } catch (e) {
-          userPseudoEl.textContent = user.email;
+          if (userPseudoEl) userPseudoEl.textContent = user.email;
         }
       } else {
-        // Si non connecté, rediriger vers la page de connexion
+        // Redirection vers la page compte/connexion si déconnecté
         window.location.href = 'compte.html';
       }
     });
 
-    // Action de déconnexion
+    // Action du bouton Déconnexion
     if (btnLogout) {
       btnLogout.addEventListener('click', () => {
         signOut(auth).then(() => {
