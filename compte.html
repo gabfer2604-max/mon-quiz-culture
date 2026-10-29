@@ -257,23 +257,34 @@
     }
 
     if (btnLogin) {
-      btnLogin.addEventListener('click', () => {
+      btnLogin.addEventListener('click', async () => {
         const email = emailInput ? emailInput.value.trim() : '';
         const password = passwordInput ? passwordInput.value : '';
+        const pseudo = pseudoInput ? pseudoInput.value.trim() : '';
 
         if (!email || !password) {
           showMessage('Veuillez remplir tous les champs.', true);
           return;
         }
 
-        signInWithEmailAndPassword(auth, email, password)
-          .then(() => {
-            showMessage('Connexion réussie ! Redirection...');
-            setTimeout(() => window.location.href = 'index.html', 1200);
-          })
-          .catch(() => showMessage('E-mail ou mot de passe incorrect.', true));
+        try {
+          // 1. Connexion Firebase Auth
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          // 2. S'assurer que le document Firestore existe (et mettre à jour le pseudo si renseigné)
+          const userDocRef = doc(db, "users", user.uid);
+          
+          await setDoc(userDocRef, {
+            email: email,
+            ...(pseudo && { pseudo: pseudo }) // Met à jour le pseudo s'il a été écrit dans l'input
+          }, { merge: true }); // { merge: true } évite d'écraser les anciennes données (comme le score)
+
+          showMessage('Connexion réussie ! Redirection...');
+          setTimeout(() => window.location.href = 'index.html', 1200);
+
+        } catch (error) {
+          showMessage('E-mail ou mot de passe incorrect.', true);
+        }
       });
     }
-  </script>
-</body>
-</html>
