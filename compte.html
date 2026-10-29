@@ -269,23 +269,37 @@
           return;
         }
 
+        showMessage('Connexion en cours...', false);
+
         try {
-          console.log("Tentative de connexion pour :", email); // Pour voir dans la console
+          // 1. Connexion Auth
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
 
-          const userDocRef = doc(db, "users", user.uid);
-          await setDoc(userDocRef, {
-            email: email,
-            ...(pseudo && { pseudo: pseudo })
-          }, { merge: true });
+          // 2. Tentative d'enregistrement Firestore en arrière-plan (sécurisée pour ne pas bloquer)
+          try {
+            const userDocRef = doc(db, "users", user.uid);
+            await setDoc(userDocRef, {
+              email: email,
+              ...(pseudo && { pseudo: pseudo })
+            }, { merge: true });
+          } catch (firestoreError) {
+            console.log("Avertissement Firestore (non bloquant) :", firestoreError);
+          }
 
+          // 3. Redirection immédiate quoiqu'il arrive
           showMessage('Connexion réussie ! Redirection...');
-          setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+          setTimeout(() => { window.location.href = 'index.html'; }, 1000);
 
         } catch (error) {
-          console.error("Erreur Firebase:", error);
-          showMessage("Erreur de connexion : " + error.message, true);
+          console.error("Erreur Firebase Auth:", error.code);
+          let msg = "Erreur de connexion.";
+          if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+            msg = "E-mail ou mot de passe incorrect.";
+          } else if (error.code === 'auth/invalid-email') {
+            msg = "Format d'e-mail invalide.";
+          }
+          showMessage(msg, true);
         }
       });
     }
