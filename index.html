@@ -317,10 +317,23 @@
         details ul a:hover {
             color: #ffaa00 !important;
             text-decoration: underline;
+
+         /* Effet sur le bouton Rouage */
+#btn-settings-icon {
+  transition: transform 0.3s ease, opacity 0.2s;
+}
+
+#btn-settings-icon:hover {
+  transform: rotate(60deg);
+  opacity: 0.8;
+}
         }
     </style>
 </head>
 <body>
+
+    <!-- Bouton Rouage (Paramètres) en haut à droite -->
+<a href="parametres.html" id="btn-settings-icon" style="position: absolute; top: 20px; right: 20px; text-decoration: none; font-size: 24px; z-index: 1000;" title="Paramètres">⚙️</a>
 
     <!-- Bouton 3 barres -->
     <button class="burger-menu" onclick="toggleMenu()" aria-label="Ouvrir le menu">
