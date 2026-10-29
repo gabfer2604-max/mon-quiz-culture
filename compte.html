@@ -172,18 +172,19 @@
     <a href="index.html" class="nav-link">← Retour à l'accueil</a>
   </div>
 
+  <!-- Script Firebase mis à jour avec la version stable 10.8.0 -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getAuth, 
       createUserWithEmailAndPassword, 
       signInWithEmailAndPassword 
-    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { 
       getFirestore, 
       doc, 
       setDoc 
-    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
