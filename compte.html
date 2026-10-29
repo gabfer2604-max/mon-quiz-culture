@@ -270,6 +270,7 @@
         }
 
         try {
+          console.log("Tentative de connexion pour :", email); // Pour voir dans la console
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
 
@@ -283,7 +284,8 @@
           setTimeout(() => { window.location.href = 'index.html'; }, 1200);
 
         } catch (error) {
-          showMessage('E-mail ou mot de passe incorrect.', true);
+          console.error("Erreur Firebase:", error);
+          showMessage("Erreur de connexion : " + error.message, true);
         }
       });
     }
