@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paramètres - CultureFaits</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 35px 30px;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      border: 1px solid #eaeaea;
+      max-width: 400px;
+      width: 90%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #000000;
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .info-box {
+      margin-bottom: 25px;
+      font-size: 16px;
+      color: #333333;
+      line-height: 1.5;
+    }
+
+    .info-box strong {
+      color: #ff9500;
+      font-size: 18px;
+    }
+
+    .btn-danger {
+      width: 100%;
+      padding: 12px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+    }
+
+    .nav-link {
+      margin-top: 25px;
+      display: inline-block;
+      color: #666666;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      color: #ff9500;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Paramètres</h2>
+    
+    <!-- 1. Connecté en tant que : Nom d'utilisateur -->
+    <div class="info-box">
+      Connecté en tant que :<br>
+      <strong id="user-pseudo">Chargement...</strong>
+    </div>
+
+    <!-- Bouton de déconnexion -->
+    <button id="btn-logout" class="btn-danger">Déconnexion</button>
+
+    <br>
+    <a href="index.html" class="nav-link">← Retour à l'accueil</a>
+  </div>
+
+  <!-- Script Firebase pour récupérer le pseudo et gérer la déconnexion -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
+      authDomain: "culturefaits.firebaseapp.com",
+      projectId: "culturefaits",
+      storageBucket: "culturefaits.firebasestorage.app",
+      messagingSenderId: "192511796848",
+      appId: "1:192511796848:web:cccef0c7ae77e823d6b6b5",
+      measurementId: "G-PNWRYPXC4L"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const userPseudoEl = document.getElementById('user-pseudo');
+    const btnLogout = document.getElementById('btn-logout');
+
+    // Vérifier l'état de connexion et récupérer le pseudo depuis Firestore
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            userPseudoEl.textContent = userDoc.data().pseudo || user.email;
+          } else {
+            userPseudoEl.textContent = user.email;
+          }
+        } catch (e) {
+          userPseudoEl.textContent = user.email;
+        }
+      } else {
+        // Si non connecté, rediriger vers la page de connexion
+        window.location.href = 'compte.html';
+      }
+    });
+
+    // Action de déconnexion
+    if (btnLogout) {
+      btnLogout.addEventListener('click', () => {
+        signOut(auth).then(() => {
+          window.location.href = 'index.html';
+        });
+      });
+    }
+  </script>
+</body>
+</html>
