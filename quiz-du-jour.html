@@ -84,8 +84,6 @@
             display: none;
             margin-top: 20px;
             padding: 15px;
-            background-color: #e8f5e9;
-            color: #2e7d32;
             border-radius: 8px;
             font-size: 1.1rem;
             font-weight: bold;
@@ -108,24 +106,43 @@
 
     <div class="container">
         <div class="date-badge" id="dateAujourdhui">---</div>
-<h1>Le Quiz du Jour</h1>
+        <h1>Le Quiz du Jour</h1>
 
-<!-- BLOC DU QUIZ À REMETTRE HERE -->
-<div class="question-box">
-    <div class="question-texte" id="questionDuJour">Chargement de la question...</div>
-    
-    <div style="margin: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 12px;">
-    <input type="text" id="reponseUtilisateur" placeholder="Tapez votre réponse ici..." style="padding: 12px; width: 90%; max-width: 300px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; text-align: center; box-sizing: border-box;">
-    <button class="btn-reponse" onclick="validerReponse()" style="width: 90%; max-width: 300px; padding: 12px; border-radius: 8px;">Valider</button>
-</div>
+        <div class="question-box">
+            <div class="question-texte" id="questionDuJour">Chargement de la question...</div>
+            
+            <div id="zone-saisie" style="margin: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <input type="text" id="reponseUtilisateur" placeholder="Tapez votre réponse ici..." style="padding: 12px; width: 90%; max-width: 300px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; text-align: center; box-sizing: border-box;">
+                <button class="btn-reponse" id="btnValider" onclick="validerReponse()" style="width: 90%; max-width: 300px; padding: 12px; border-radius: 8px;">Valider</button>
+            </div>
 
-    <div class="reponse-box" id="reponseDuJour" style="display: none; padding: 15px; border-radius: 8px; margin-top: 15px;"></div>
-</div>
+            <div class="reponse-box" id="reponseDuJour" style="display: none; padding: 15px; border-radius: 8px; margin-top: 15px;"></div>
+        </div>
 
-<a href="index.html" class="btn-retour">← Retour à l'accueil</a>
+        <a href="index.html" class="btn-retour">← Retour à l'accueil</a>
+    </div>
 
-    <script>
-       const quiz365 = [
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
+            authDomain: "culturefaits.firebaseapp.com",
+            projectId: "culturefaits",
+            storageBucket: "culturefaits.firebasestorage.app",
+            messagingSenderId: "192511796848",
+            appId: "1:192511796848:web:cccef0c7ae77e823d6b6b5",
+            measurementId: "G-PNWRYPXC4L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ICI SE PLACE TON TABLEAU quiz365 :
+        const quiz365 = [
 
     { q: "Quel est le plus long fleuve d'Europe ?", r: "La Volga" },
     { q: "Quel pays a la plus grande frontière terrestre avec la France ?", r: "Le Brésil (avec la Guyane française)" },
@@ -546,8 +563,8 @@
     { q: "Quel sport est associé au Super Bowl ?", r: "Le football américain" },
     { q: "Quelle couleur obtient-on en mélangeant du bleu et du jaune ?", r: "Le vert" }
 ];
+        
 
-        // 2. Fonction pour trouver le numéro du jour de l'année (1 à 365)
         function getJourDeLAnnee() {
             const maintenant = new Date();
             const debutAnnee = new Date(maintenant.getFullYear(), 0, 0);
@@ -556,113 +573,120 @@
             return Math.floor(diff / unJour);
         }
 
-        // 3. Affichage de la date et de la question du jour
-        function chargerQuiz() {
-    const dateAujourdhui = new Date();
-    const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('dateAujourdhui').textContent = dateAujourdhui.toLocaleDateString('fr-FR', optionsDate);
+        const aujourdhuiStr = new Date().toISOString().split('T')[0]; 
+        let utilisateurActuel = null;
 
-    const indexJour = getJourDeLAnnee() % quiz365.length;
-    const quizActuel = quiz365[indexJour];
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                utilisateurActuel = user;
+                await verifierParticipationFirestore(user.uid);
+            } else {
+                window.location.href = 'compte.html';
+            }
+        });
 
-    document.getElementById('questionDuJour').textContent = quizActuel.q;
-}
-        // Nettoyage : minuscules, suppression des accents et des articles
-function nettoyerTexte(chaine) {
-    return chaine
-        .toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/^(le|la|les|l'|une?|des)\s+/i, "")
-        .trim();
-}
+        async function verifierParticipationFirestore(uid) {
+            const docId = `${uid}_${aujourdhuiStr}`;
+            const refDoc = doc(db, "participations", docId);
+            const snap = await getDoc(refDoc);
 
-// Tolérance aux fautes de frappe (distance de Levenshtein)
-function calculerDistance(a, b) {
-    const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-    for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
-    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+            const dateAujourdhui = new Date();
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateAujourdhui').textContent = dateAujourdhui.toLocaleDateString('fr-FR', optionsDate);
 
-    for (let i = 1; i <= a.length; i++) {
-        for (let j = 1; j <= b.length; j++) {
-            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-            matrix[i][j] = Math.min(
-                matrix[i - 1][j] + 1,
-                matrix[i][j - 1] + 1,
-                matrix[i - 1][j - 1] + cost
-            );
-        }
-    }
-    return matrix[a.length][b.length];
-}
+            const indexJour = getJourDeLAnnee() % quiz365.length;
+            const quizActuel = quiz365[indexJour];
+            document.getElementById('questionDuJour').textContent = quizActuel.q;
 
-function validerReponse() {
-    const saisie = document.getElementById('reponseUtilisateur').value;
-    const reponseBox = document.getElementById('reponseDuJour');
-    
-    if (!saisie.trim()) return;
+            if (snap.exists()) {
+                const donnees = snap.data();
+                const reponseBox = document.getElementById('reponseDuJour');
+                
+                document.getElementById('zone-saisie').style.display = 'none';
+                reponseBox.style.display = 'block';
 
-    const indexJour = getJourDeLAnnee() % quiz365.length;
-    const bonneReponse = quiz365[indexJour].r;
-
-    const propreSaisie = nettoyerTexte(saisie);
-    const propreBonne = nettoyerTexte(bonneReponse);
-
-    const distance = calculerDistance(propreSaisie, propreBonne);
-    const tolerance = propreBonne.length > 5 ? 2 : 1;
-
-    // Date du jour au format YYYY-MM-DD
-    const aujourdhui = new Date().toISOString().split('T')[0];
-    const dernierQuizReussi = localStorage.getItem('quiz_dernier_succes');
-
-    reponseBox.style.display = 'block';
-
-    if (distance <= tolerance) {
-        // VÉRIFICATION : Déjà joué et réussi aujourd'hui ?
-        if (dernierQuizReussi === aujourdhui) {
-            reponseBox.style.backgroundColor = '#e2e3e5';
-            reponseBox.style.color = '#383d41';
-            reponseBox.innerHTML = `🎉 <strong>Bonne réponse !</strong> Vous avez déjà récupéré vos 10 points du jour. Revenez demain !`;
-            return;
+                if (donnees.reussi) {
+                    reponseBox.style.backgroundColor = '#d4edda';
+                    reponseBox.style.color = '#155724';
+                    reponseBox.innerHTML = `🎉 <strong>Déjà validé aujourd'hui !</strong> Vous avez gagné vos points. Revenez demain !`;
+                } else {
+                    reponseBox.style.backgroundColor = '#f8d7da';
+                    reponseBox.style.color = '#721c24';
+                    reponseBox.innerHTML = `❌ <strong>Quiz déjà tenté aujourd'hui.</strong> Vous avez épuisé votre tentative pour cette date. Revenez demain !`;
+                }
+            }
         }
 
-        // BONNE RÉPONSE (Première fois du jour)
-        reponseBox.style.backgroundColor = '#d4edda';
-        reponseBox.style.color = '#155724';
-        reponseBox.innerHTML = `🎉 <strong>Bravo !</strong> La réponse était bien : <strong>${bonneReponse}</strong> (+10 pts)`;
+        function nettoyerTexte(chaine) {
+            return chaine.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/^(le|la|les|l'|une?|des)\s+/i, "").trim();
+        }
 
-        // Enregistre la date pour bloquer les tentatives suivantes
-        localStorage.setItem('quiz_dernier_succes', aujourdhui);
+        function calculerDistance(a, b) {
+            const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+            for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+            for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+            for (let i = 1; i <= a.length; i++) {
+                for (let j = 1; j <= b.length; j++) {
+                    const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
+                }
+            }
+            return matrix[a.length][b.length];
+        }
 
-        // Ajout des points
-        let score = parseInt(localStorage.getItem('quiz_score_total') || 0) + 10;
-        let nbQuiz = parseInt(localStorage.getItem('quiz_count') || 0) + 1;
-        localStorage.setItem('quiz_score_total', score);
-        localStorage.setItem('quiz_count', nbQuiz);
-        chargerScoreMenu();
+        window.validerReponse = async function() {
+            if (!utilisateurActuel) return;
 
-    } else {
-        // MAUVAISE RÉPONSE
-        reponseBox.style.backgroundColor = '#f8d7da';
-        reponseBox.style.color = '#721c24';
-        reponseBox.innerHTML = `❌ <strong>Dommage !</strong> La bonne réponse était : <strong>${bonneReponse}</strong>`;
-    }
-}
-        
-        // Charger au lancement
-        chargerQuiz();
-        function chargerScoreMenu() {
-    const scoreSauvegarde = localStorage.getItem('quiz_score_total') || 0;
-    const quizCountSauvegarde = localStorage.getItem('quiz_count') || 0;
+            const saisie = document.getElementById('reponseUtilisateur').value;
+            const reponseBox = document.getElementById('reponseDuJour');
+            
+            if (!saisie.trim()) return;
 
-    const elemScore = document.getElementById('total-score');
-    const elemCount = document.getElementById('quiz-count');
+            const indexJour = getJourDeLAnnee() % quiz365.length;
+            const bonneReponse = quiz365[indexJour].r;
 
-    if (elemScore) elemScore.textContent = scoreSauvegarde;
-    if (elemCount) elemCount.textContent = quizCountSauvegarde;
-}
+            const propreSaisie = nettoyerTexte(saisie);
+            const propreBonne = nettoyerTexte(bonneReponse);
 
-window.addEventListener('DOMContentLoaded', chargerScoreMenu);
+            const distance = calculerDistance(propreSaisie, propreBonne);
+            const tolerance = propreBonne.length > 5 ? 2 : 1;
+
+            const docId = `${utilisateurActuel.uid}_${aujourdhuiStr}`;
+            const refDoc = doc(db, "participations", docId);
+
+            reponseBox.style.display = 'block';
+            document.getElementById('zone-saisie').style.display = 'none';
+
+            if (distance <= tolerance) {
+                reponseBox.style.backgroundColor = '#d4edda';
+                reponseBox.style.color = '#155724';
+                reponseBox.innerHTML = `🎉 <strong>Bravo !</strong> La réponse était bien : <strong>${bonneReponse}</strong> (+10 pts)`;
+
+                await setDoc(refDoc, {
+                    uid: utilisateurActuel.uid,
+                    date: aujourdhuiStr,
+                    reussi: true,
+                    timestamp: new Date()
+                });
+
+                const userDocRef = doc(db, "users", utilisateurActuel.uid);
+                await updateDoc(userDocRef, {
+                    scoreQuiz: increment(10)
+                });
+
+            } else {
+                reponseBox.style.backgroundColor = '#f8d7da';
+                reponseBox.style.color = '#721c24';
+                reponseBox.innerHTML = `❌ <strong>Dommage !</strong> La bonne réponse était : <strong>${bonneReponse}</strong>. Tentative enregistrée pour aujourd'hui.`;
+
+                await setDoc(refDoc, {
+                    uid: utilisateurActuel.uid,
+                    date: aujourdhuiStr,
+                    reussi: false,
+                    timestamp: new Date()
+                });
+            }
+        };
     </script>
-
 </body>
-</html>
+</html>        
