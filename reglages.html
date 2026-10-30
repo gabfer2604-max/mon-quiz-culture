@@ -17,14 +17,56 @@
       justify-content: center;
       min-height: 100vh;
       box-sizing: border-box;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* --- Styles des Thèmes --- */
+    body.theme-blanc {
+      background-color: #ffffff;
+      color: #000000;
+    }
+    body.theme-blanc .card, body.theme-blanc .profile-card {
+      background: #ffffff;
+      border-color: #eaeaea;
+    }
+
+    body.theme-sombre {
+      background-color: #121212;
+      color: #f1f1f1;
+    }
+    body.theme-sombre .card {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    body.theme-sombre .profile-card {
+      background-color: #2a2a2a;
+      border: 1px solid #3d3d3d;
+    }
+    body.theme-sombre h2, body.theme-sombre .user-name {
+      color: #ff9500;
+    }
+    body.theme-sombre .status-text {
+      color: #aaaaaa;
+    }
+
+    body.theme-bleu {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+    }
+    body.theme-bleu .card {
+      background: #ffffff;
+      border: 1px solid #bbdefb;
+    }
+    body.theme-bleu .profile-card {
+      background-color: #f1f8fe;
+      border: 1px solid #c8e6c9;
     }
 
     .card {
-      background: #ffffff;
       padding: 35px 30px;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      border: 1px solid #eaeaea;
       max-width: 400px;
       width: 100%;
       box-sizing: border-box;
@@ -34,15 +76,11 @@
     h2 {
       margin-top: 0;
       margin-bottom: 20px;
-      color: #000000;
       font-size: 26px;
       font-weight: 700;
     }
 
-    /* Styles de la Carte de Profil */
     .profile-card {
-      background-color: #f9f9f9;
-      border: 1px solid #eeeeee;
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 25px;
@@ -68,7 +106,6 @@
 
     .status-text {
       font-size: 14px;
-      color: #666666;
       margin: 0;
     }
 
@@ -86,7 +123,6 @@
       margin: 0;
     }
 
-    /* Boutons et navigation */
     .btn-danger {
       width: 100%;
       padding: 12px;
@@ -121,6 +157,20 @@
       color: #ff9500;
       text-decoration: underline;
     }
+
+    .parametres-theme {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .parametres-theme button {
+      padding: 8px 12px;
+      margin: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -141,20 +191,20 @@
 
     <br>
     <a href="index.html" class="nav-link">← Retour à l'accueil</a>
-  </div>
 
-  <div class="parametres-theme">
-    <h3>Choisir le thème</h3>
-    <button onclick="changerTheme('blanc')">Blanc ☀️</button>
-    <button onclick="changerTheme('sombre')">Sombre 🌙</button>
-    <button onclick="changerTheme('bleu')">Bleu 🌊</button>
-</div>
+    <div class="parametres-theme">
+      <h3>Choisir le thème</h3>
+      <button onclick="changerTheme('blanc')">Blanc ☀️</button>
+      <button onclick="changerTheme('sombre')">Sombre 🌙</button>
+      <button onclick="changerTheme('bleu')">Bleu 🌊</button>
+    </div>
+  </div>
 
   <!-- Script Firebase avec version stable 10.8.0 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCOsryqntdtf2PptednKPDE6BB03jIXH40",
@@ -175,15 +225,38 @@
     const userAvatarEl = document.getElementById('user-avatar');
     const btnLogout = document.getElementById('btn-logout');
 
+    // 1. Définition globale de la fonction changerTheme pour qu'elle soit accessible par les boutons HTML (onclick)
+    window.changerTheme = function(theme) {
+      document.body.className = ''; 
+      if (theme === 'sombre') {
+          document.body.classList.add('theme-sombre');
+      } else if (theme === 'bleu') {
+          document.body.classList.add('theme-bleu');
+      } else {
+          document.body.classList.add('theme-blanc');
+      }
+
+      localStorage.setItem('site_theme', theme);
+
+      if (auth.currentUser) {
+          const userDocRef = doc(db, "users", auth.currentUser.uid);
+          updateDoc(userDocRef, { themeprefere: theme }).catch((error) => {
+              console.log("Erreur de sauvegarde Firestore du thème :", error);
+          });
+      }
+    };
+
+    // 2. Charger le thème immédiatement au chargement du script
+    const themeSauvegarde = localStorage.getItem('site_theme') || 'blanc';
+    window.changerTheme(themeSauvegarde);
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Affichage de secours immédiat (évite de rester bloqué sur "Chargement...")
         let pseudo = user.email ? user.email.split('@')[0] : "Joueur";
         
         if (userEmailEl) userEmailEl.textContent = user.email || "";
 
         try {
-          // Chercher le vrai pseudo dans Firestore
           const userDoc = await getDoc(doc(db, "users", user.uid));
           
           if (userDoc.exists() && userDoc.data().pseudo) {
@@ -191,14 +264,17 @@
           } else if (user.displayName) {
             pseudo = user.displayName;
           }
+
+          // Si un thème est enregistré dans Firestore, on l'applique en priorité
+          if (userDoc.exists() && userDoc.data().themeprefere) {
+            window.changerTheme(userDoc.data().themeprefere);
+          }
         } catch (e) {
-          console.error("Erreur Firestore (utilisation du pseudo par défaut) :", e);
+          console.error("Erreur Firestore :", e);
         }
 
-        // Affichage final du pseudo
         if (userPseudoEl) userPseudoEl.textContent = pseudo;
         
-        // Première lettre dans l'avatar
         if (userAvatarEl && pseudo) {
           userAvatarEl.textContent = pseudo.charAt(0).toUpperCase();
         }
@@ -208,7 +284,6 @@
       }
     });
 
-    // Gestion de la déconnexion
     if (btnLogout) {
       btnLogout.addEventListener('click', () => {
         signOut(auth).then(() => {
@@ -216,35 +291,6 @@
         });
       });
     }
-    // Fonction pour changer le thème
-function changerTheme(theme) {
-    // 1. Appliquer le thème immédiatement sur la page active
-    document.body.className = ''; // Supprime les anciennes classes
-    if (theme === 'sombre') {
-        document.body.classList.add('theme-sombre');
-    } else if (theme === 'bleu') {
-        document.body.classList.add('theme-bleu');
-    } else {
-        document.body.classList.add('theme-blanc'); // Thème par défaut
-    }
-
-    // 2. Sauvegarder localement pour que ce soit instantané partout
-    localStorage.setItem('site_theme', theme);
-
-    // 3. Optionnel : Si l'utilisateur est connecté, sauvegarder aussi dans Firestore
-    if (typeof auth !== 'undefined' && auth.currentUser) {
-        const userDocRef = doc(db, "users", auth.currentUser.uid);
-        updateDoc(userDocRef, { themeprefere: theme }).catch((error) => {
-            console.log("Erreur de sauvegarde Firestore du thème :", error);
-        });
-    }
-}
-
-// 4. Charger le thème automatiquement dès qu'une page du site s'ouvre
-window.addEventListener('DOMContentLoaded', () => {
-    const themeSauvegarde = localStorage.getItem('site_theme') || 'blanc';
-    changerTheme(themeSauvegarde);
-});
   </script>
 </body>
 </html>
