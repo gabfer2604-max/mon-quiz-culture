@@ -143,6 +143,13 @@
     <a href="index.html" class="nav-link">← Retour à l'accueil</a>
   </div>
 
+  <div class="parametres-theme">
+    <h3>Choisir le thème</h3>
+    <button onclick="changerTheme('blanc')">Blanc ☀️</button>
+    <button onclick="changerTheme('sombre')">Sombre 🌙</button>
+    <button onclick="changerTheme('bleu')">Bleu 🌊</button>
+</div>
+
   <!-- Script Firebase avec version stable 10.8.0 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -209,6 +216,35 @@
         });
       });
     }
+    // Fonction pour changer le thème
+function changerTheme(theme) {
+    // 1. Appliquer le thème immédiatement sur la page active
+    document.body.className = ''; // Supprime les anciennes classes
+    if (theme === 'sombre') {
+        document.body.classList.add('theme-sombre');
+    } else if (theme === 'bleu') {
+        document.body.classList.add('theme-bleu');
+    } else {
+        document.body.classList.add('theme-blanc'); // Thème par défaut
+    }
+
+    // 2. Sauvegarder localement pour que ce soit instantané partout
+    localStorage.setItem('site_theme', theme);
+
+    // 3. Optionnel : Si l'utilisateur est connecté, sauvegarder aussi dans Firestore
+    if (typeof auth !== 'undefined' && auth.currentUser) {
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        updateDoc(userDocRef, { themeprefere: theme }).catch((error) => {
+            console.log("Erreur de sauvegarde Firestore du thème :", error);
+        });
+    }
+}
+
+// 4. Charger le thème automatiquement dès qu'une page du site s'ouvre
+window.addEventListener('DOMContentLoaded', () => {
+    const themeSauvegarde = localStorage.getItem('site_theme') || 'blanc';
+    changerTheme(themeSauvegarde);
+});
   </script>
 </body>
 </html>
