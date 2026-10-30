@@ -76,17 +76,19 @@
         <a href="index.html" class="btn-retour">← Retour à l'acceuil</a>
     </div>
     
-// Applique instantanément le thème choisi dès que la page s'ouvre
-(function() {
-    const themeSauvegarde = localStorage.getItem('site_theme') || 'blanc';
-    document.body.className = ''; // Nettoie
-    if (themeSauvegarde === 'sombre') {
-        document.body.classList.add('theme-sombre');
-    } else if (themeSauvegarde === 'bleu') {
-        document.body.classList.add('theme-bleu');
-    } else {
-        document.body.classList.add('theme-blanc');
-    }
-})();
+<script>
+    // Applique instantanément le thème choisi dès que la page s'ouvre
+    (function() {
+        const themeSauvegarde = localStorage.getItem('site_theme') || 'blanc';
+        document.body.className = ''; 
+        if (themeSauvegarde === 'sombre') {
+            document.body.classList.add('theme-sombre');
+        } else if (themeSauvegarde === 'bleu') {
+            document.body.classList.add('theme-bleu');
+        } else {
+            document.body.classList.add('theme-blanc');
+        }
+    })();
+</script>
 </body>
 </html>
